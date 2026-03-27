@@ -1,0 +1,56 @@
+[
+  {
+    "id": "phq-9",
+    "title": "우울(PHQ-9)",
+    "recommendedAge": "만19세 이상",
+    "path": "./questionnaires/phq-9.json"
+  },
+  {
+    "id": "gad-7",
+    "title": "불안(GAD-7)",
+    "recommendedAge": "청소년 이상",
+    "path": "./questionnaires/gad-7.json"
+  },
+  {
+    "id": "mkpq-16",
+    "title": "조기정신증(mKPQ-16)",
+    "recommendedAge": "청소년 이상",
+    "path": "./questionnaires/mkpq-16.json"
+  },
+  {
+    "id": "k-mdq",
+    "title": "조울증(K-MDQ)",
+    "recommendedAge": "성인 이상",
+    "path": "./questionnaires/k-mdq.json"
+  },
+  {
+    "id": "pss-10",
+    "title": "스트레스(PSS)",
+    "recommendedAge": "청소년 이상",
+    "path": "./questionnaires/pss-10.json"
+  },
+  {
+    "id": "isi-k",
+    "title": "불면(ISI-K)",
+    "recommendedAge": "성인 이상",
+    "path": "./questionnaires/isi-k.json"
+  },
+  {
+    "id": "audit-k",
+    "title": "알코올중독(AUDIT-K)",
+    "recommendedAge": "성인 이상",
+    "path": "./questionnaires/audit-k.json"
+  },
+  {
+    "id": "ies-r",
+    "title": "사건충격척도(IES-R)",
+    "recommendedAge": "",
+    "path": "./questionnaires/ies-r.json"
+  },
+  {
+    "id": "cri",
+    "title": "정신건강위기평정척도(CRI)",
+    "recommendedAge": "",
+    "path": "./questionnaires/cri.json"
+  }
+]

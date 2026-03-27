@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>MindMap 다시서기</title>
+    <?!= include("Styles"); ?>
+  </head>
+  <body class="auth-view">
+    <main id="authRoot" class="auth-shell">
+      <section class="auth-hero panel">
+        <p class="brand-eyebrow">Apps Script Web App</p>
+        <h1 id="authAppName">MindMap 다시서기</h1>
+        <p id="authAppSubtitle">노숙인 정신건강 척도 관리 웹앱</p>
+        <p class="auth-note">승인된 계정으로 로그인할 수 있습니다.</p>
+      </section>
+
+      <div class="auth-pane">
+        <section id="loginCard" class="auth-card panel">
+          <div class="panel-head">
+            <h2>로그인</h2>
+            <span class="count-chip auth-chip">내부 접속</span>
+          </div>
+          <p id="loginMessage" class="status-inline">아이디와 비밀번호를 입력해주세요.</p>
+          <form id="loginForm" class="auth-form">
+            <label class="field">
+              <span>아이디</span>
+            <input type="text" id="loginUsername" autocomplete="username" placeholder="아이디" />
+            </label>
+            <label class="field">
+              <span>비밀번호</span>
+              <input type="password" id="loginPassword" autocomplete="current-password" placeholder="비밀번호" />
+            </label>
+            <div class="auth-actions">
+              <button type="submit" id="loginBtn" class="primary-btn">로그인</button>
+              <button type="button" id="openSignupBtn" class="ghost-btn">가입신청</button>
+            </div>
+          </form>
+          <p class="auth-footnote">로그인한 뒤에만 척도 입력과 저장이 가능합니다. 계정이 없으면 가입신청을 접수하고 승인 후 로그인할 수 있습니다.</p>
+        </section>
+      </div>
+    </main>
+
+    <main id="appRoot" class="app-shell hidden">
+      <aside class="sidebar">
+        <section class="brand-card">
+          <p class="brand-eyebrow">Apps Script Web App</p>
+          <h1 id="appName">MindMap 다시서기</h1>
+          <p id="appSubtitle">노숙인 정신건강 척도 관리 웹앱</p>
+        </section>
+
+        <section class="status-card">
+          <div class="status-head">
+            <h2>운영 정보</h2>
+            <button type="button" id="refreshAppBtn" class="ghost-btn">새로고침</button>
+          </div>
+          <dl class="status-list">
+            <dt>접속 계정</dt>
+            <dd id="currentUserText">불러오는 중</dd>
+            <dt>연결 시트</dt>
+            <dd id="spreadsheetText">불러오는 중</dd>
+            <dt>저장 현황</dt>
+            <dd id="sheetStatsText">불러오는 중</dd>
+          </dl>
+          <p class="status-inline" id="appStatusMessage">초기 연결을 확인하는 중입니다.</p>
+        </section>
+
+        <section class="nav-card">
+          <div class="status-head">
+            <h2>척도 선택</h2>
+            <span class="count-chip" id="questionnaireCount">총 0개 척도</span>
+          </div>
+          <div class="nav-list" id="questionnaireNav"></div>
+        </section>
+      </aside>
+
+      <section class="content">
+        <header class="content-header">
+          <div>
+            <p class="content-caption">현장 검사 입력</p>
+            <h2 id="scaleTitle">척도를 불러오는 중입니다.</h2>
+            <p id="scaleMeta" class="content-meta"></p>
+          </div>
+          <div class="header-actions">
+            <button type="button" id="logoutBtn" class="ghost-btn hidden">로그아웃</button>
+            <button type="button" id="resetFormBtn" class="ghost-btn">현재 검사 초기화</button>
+            <button type="button" id="printResultBtn" class="ghost-btn" disabled>인쇄</button>
+            <button type="button" id="saveResultBtn" class="primary-btn" disabled>구글 시트 저장</button>
+          </div>
+        </header>
+
+        <div class="screen-grid">
+          <section class="panel">
+            <div class="panel-head">
+              <h3>검사정보</h3>
+              <span class="progress-chip" id="progressLabel">0%</span>
+            </div>
+            <div class="progress-track" aria-hidden="true">
+              <div id="progressFill" class="progress-fill"></div>
+            </div>
+
+            <form id="screeningForm" class="screening-form">
+              <section class="section-block">
+                <h4>기본정보</h4>
+                <div class="meta-grid">
+                  <label class="field">
+                    <span>검사일</span>
+                    <input type="date" id="sessionDate" required />
+                  </label>
+                  <label class="field">
+                    <span>담당자</span>
+                    <input type="text" id="workerName" placeholder="담당자 이름 또는 계정" />
+                  </label>
+                  <label class="field field-wide">
+                    <span>대상자</span>
+                    <input type="text" id="clientLabel" placeholder="대상자 이름 또는 식별 메모" />
+                  </label>
+                  <label class="field">
+                    <span>생년월일</span>
+                    <input type="date" id="birthDate" />
+                  </label>
+                  <label class="field field-wide">
+                    <span>비고</span>
+                    <textarea id="sessionNote" rows="2" placeholder="현장 메모 또는 참고 사항"></textarea>
+                  </label>
+                </div>
+              </section>
+
+              <section class="section-block">
+                <h4>응답자 정보</h4>
+                <div id="respondentFields" class="respondent-grid"></div>
+              </section>
+
+              <section class="section-block">
+                <div class="question-head">
+                  <h4>문항응답</h4>
+                  <p id="questionPrompt" class="question-prompt"></p>
+                </div>
+                <div id="questionsRoot" class="question-list"></div>
+              </section>
+
+              <div class="form-actions">
+                <button type="submit" class="primary-btn">결과 계산</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel result-panel">
+            <div class="panel-head">
+              <h3>결과 요약</h3>
+              <span class="count-chip" id="resultStateChip">미계산</span>
+            </div>
+
+            <div id="resultEmpty" class="empty-state">
+              문항 응답을 완료한 뒤 결과 계산을 누르면 결과가 여기에 표시됩니다.
+            </div>
+
+            <div id="resultPanel" class="result-body hidden">
+              <div class="print-header">
+                <p id="printOrgLine"></p>
+                <h4 id="printScaleLine"></h4>
+                <p id="printMetaLine"></p>
+              </div>
+
+              <div class="result-hero">
+                <div>
+                  <p id="resultTitle" class="result-title"></p>
+                  <strong id="resultScore" class="result-score"></strong>
+                </div>
+                <span id="resultBand" class="band-chip"></span>
+              </div>
+
+              <div id="resultFlags" class="flag-list"></div>
+
+              <section class="result-section">
+                <h4>핵심 요약</h4>
+                <ul id="resultHighlights" class="bullet-list"></ul>
+              </section>
+
+              <section class="result-section">
+                <h4>검사 정보</h4>
+                <dl id="resultMeta" class="meta-list"></dl>
+              </section>
+
+              <section class="result-section">
+                <h4>문항별 응답</h4>
+                <div id="resultBreakdown" class="breakdown-list"></div>
+              </section>
+
+              <section class="result-section">
+                <h4>참고 메모</h4>
+                <ul id="resultNotes" class="bullet-list"></ul>
+              </section>
+            </div>
+          </section>
+        </div>
+
+        <section id="recentRecordsPanel" class="panel">
+          <div class="panel-head">
+            <h3>최근 저장 결과</h3>
+            <button type="button" id="refreshRecordsBtn" class="ghost-btn">목록 새로고침</button>
+          </div>
+
+          <div class="table-wrap">
+            <table class="records-table">
+              <thead>
+                <tr>
+                  <th>저장시각</th>
+                  <th>척도</th>
+                  <th>점수</th>
+                  <th>결과구간</th>
+                  <th>담당자</th>
+                  <th>대상자</th>
+                  <th>작업</th>
+                </tr>
+              </thead>
+              <tbody id="recordsTableBody"></tbody>
+            </table>
+          </div>
+          <p id="recordsEmpty" class="table-empty hidden">저장된 결과가 아직 없습니다.</p>
+        </section>
+
+        <section id="adminPanel" class="panel hidden admin-panel">
+          <div class="panel-head">
+            <h3>관리자 계정관리</h3>
+            <div class="header-actions">
+              <span id="adminSummaryChip" class="count-chip">계정 0개 · 신청 0건</span>
+              <button type="button" id="refreshAdminBtn" class="ghost-btn">새로고침</button>
+            </div>
+          </div>
+
+          <div class="admin-grid">
+            <section class="section-block admin-card">
+              <div class="panel-head">
+                <h4 id="adminFormTitle">계정 등록</h4>
+                <button type="button" id="clearAdminFormBtn" class="ghost-btn">새 계정</button>
+              </div>
+              <form id="adminAccountForm" class="admin-form">
+                <input type="hidden" id="adminOriginalUsername" />
+                <input type="hidden" id="adminSourceRequestId" />
+                <div class="admin-form-grid">
+                  <label class="field">
+                    <span>아이디</span>
+                    <input type="text" id="adminUsername" placeholder="계정 아이디" />
+                  </label>
+                  <label class="field">
+                    <span>이름</span>
+                    <input type="text" id="adminDisplayName" placeholder="표시 이름" />
+                  </label>
+                  <label class="field">
+                    <span>비밀번호</span>
+                    <input type="password" id="adminPassword" placeholder="변경 시 입력" />
+                  </label>
+                  <label class="field">
+                    <span>권한</span>
+                    <select id="adminRole">
+                      <option value="user">일반</option>
+                      <option value="admin">관리자</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>상태</span>
+                    <select id="adminActive">
+                      <option value="true">활성</option>
+                      <option value="false">비활성</option>
+                    </select>
+                  </label>
+                  <label class="field">
+                    <span>연락처</span>
+                    <input type="text" id="adminContact" placeholder="연락처" />
+                  </label>
+                  <label class="field">
+                    <span>소속</span>
+                    <input type="text" id="adminAffiliation" placeholder="소속" />
+                  </label>
+                  <label class="field field-wide">
+                    <span>비고</span>
+                    <textarea id="adminNotes" rows="2" placeholder="관리 메모"></textarea>
+                  </label>
+                </div>
+                <div class="form-actions">
+                  <button type="submit" id="adminAccountSaveBtn" class="primary-btn">저장</button>
+                  <button type="button" id="adminAccountCancelBtn" class="ghost-btn">취소</button>
+                </div>
+                <p id="adminAccountMessage" class="status-inline">계정을 선택하거나 새로 등록할 수 있습니다.</p>
+              </form>
+            </section>
+
+            <section class="section-block admin-card">
+              <div class="panel-head">
+                <h4>계정 목록</h4>
+                <span id="adminAccountCountChip" class="count-chip">0명</span>
+              </div>
+              <div class="table-wrap">
+                <table class="records-table admin-table">
+                  <thead>
+                    <tr>
+                      <th>아이디</th>
+                      <th>이름</th>
+                      <th>권한</th>
+                      <th>상태</th>
+                      <th>연락처</th>
+                      <th>소속</th>
+                      <th>최근로그인</th>
+                      <th>작업</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminAccountsTableBody"></tbody>
+                </table>
+              </div>
+              <p id="adminAccountsEmpty" class="table-empty hidden">등록된 계정이 없습니다.</p>
+            </section>
+
+            <section class="section-block admin-card admin-full">
+              <div class="panel-head">
+                <h4>가입 신청</h4>
+                <span id="adminRequestCountChip" class="count-chip">0건</span>
+              </div>
+              <div class="table-wrap">
+                <table class="records-table admin-table">
+                  <thead>
+                    <tr>
+                      <th>신청시각</th>
+                      <th>이름</th>
+                      <th>아이디</th>
+                      <th>소속</th>
+                      <th>상태</th>
+                      <th>검토메모</th>
+                      <th>작업</th>
+                    </tr>
+                  </thead>
+                  <tbody id="adminRequestsTableBody"></tbody>
+                </table>
+              </div>
+              <p id="adminRequestsEmpty" class="table-empty hidden">접수된 가입 신청이 없습니다.</p>
+            </section>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <template id="questionTemplate">
+      <article class="question-card">
+        <div class="question-card-head">
+          <span class="question-number"></span>
+          <p class="question-text"></p>
+        </div>
+        <div class="choice-grid"></div>
+        <div class="subquestions hidden"></div>
+      </article>
+    </template>
+
+    <template id="radioFieldTemplate">
+      <section class="field-card">
+        <p class="field-label"></p>
+        <div class="choice-grid"></div>
+      </section>
+    </template>
+
+    <script>
+      window.__BOOTSTRAP__ = <?!= bootstrapJson ?>;
+    </script>
+    <?!= include("QuestionnaireBundle"); ?>
+    <?!= include("ClientApp"); ?>
+  </body>
+</html>

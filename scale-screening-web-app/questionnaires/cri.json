@@ -1,0 +1,322 @@
+{
+  "id": "cri",
+  "selfSeq": 9,
+  "title": "정신건강위기평정척도(CRI)",
+  "shortTitle": "CRI",
+  "recommendedAge": "",
+  "intro": [],
+  "questionPrompt": "각 항목을 확인하여 현재 위기 수준을 평가합니다.",
+  "source": {
+    "referencePage": "",
+    "institution": "국립정신건강센터",
+    "citation": "국립정신건강센터(2020). 정신건강 위기 평정 척도(CRI)."
+  },
+  "respondentFields": [],
+  "questions": [
+    {
+      "id": "q1",
+      "sectionTitle": "자타해 위험",
+      "number": "1.",
+      "text": "현재 자해/타해 폭력위험(기물파손, 욕설, 고함, 등 명백한 폭력 위험)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q2",
+      "sectionTitle": "자타해 위험",
+      "number": "2.",
+      "text": "최근 1년 내 자살시도",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q3",
+      "sectionTitle": "자타해 위험",
+      "number": "3.",
+      "text": "자타해 폭력 강도 혹은 치명도(경증장애수준 이상 또는 전치2주 이상)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "높다", "score": 1 },
+        { "value": "option_2", "label": "낮다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q4",
+      "sectionTitle": "자타해 위험",
+      "number": "4.",
+      "text": "고의성 혹은 계획성 수준(자타해 의지, 사전준비, 일정조율, 도구확인 등)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "높다", "score": 1 },
+        { "value": "option_2", "label": "낮다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q5",
+      "sectionTitle": "자타해 위험",
+      "number": "5.",
+      "text": "최근 1년 내 자타해 위험으로 인한 경찰개입 여부",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q6",
+      "sectionTitle": "자타해 위험",
+      "number": "6.",
+      "text": "최근 일주일내 폭력",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q7",
+      "sectionTitle": "자타해 위험",
+      "number": "7.",
+      "text": "과거 범죄 이력 (폭행, 성폭력, 방화, 타살 등)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q8",
+      "sectionTitle": "자타해 위험",
+      "number": "8.",
+      "text": "과거 또는 현재 환청(또는 약물, 알코올, 마약 등)에 의한 공격성 여부",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q9",
+      "sectionTitle": "정신상태",
+      "number": "9.",
+      "text": "현재 정신증 증상을 보입니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "그렇다", "score": 1 },
+        { "value": "option_2", "label": "아니다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q10",
+      "sectionTitle": "정신상태",
+      "number": "10.",
+      "text": "현재 기분장애 증상을 보입니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "그렇다", "score": 1 },
+        { "value": "option_2", "label": "아니다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q11",
+      "sectionTitle": "정신상태",
+      "number": "11.",
+      "text": "현재 조증(경조증) 증상을 보입니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "그렇다", "score": 1 },
+        { "value": "option_2", "label": "아니다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q12",
+      "sectionTitle": "정신상태",
+      "number": "12.",
+      "text": "정신과 진단을 받거나 과거 입원한 적이 있습니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q13",
+      "sectionTitle": "정신상태",
+      "number": "13.",
+      "text": "알코올/흥분제/환각제/흡입제/대마초/마약 등의 물질관련 문제가 있습니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q14",
+      "sectionTitle": "정신상태",
+      "number": "14.",
+      "text": "정신건강문제에 대한 자각 또는 통찰력에 문제가 있습니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q15",
+      "sectionTitle": "기능수준",
+      "number": "15.",
+      "text": "의사소통(언어기능/상호소통)의 손상",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q16",
+      "sectionTitle": "기능수준",
+      "number": "16.",
+      "text": "주의나 자각 손상(부주의, 주의산만, 물건을 잘 잃어버림, 잘 넘어지거나 부딪힘, 깜박임 등)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q17",
+      "sectionTitle": "기능수준",
+      "number": "17.",
+      "text": "기억능력 손상(심한 건망증 포함)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q18",
+      "sectionTitle": "기능수준",
+      "number": "18.",
+      "text": "일상적인 의사결정 손상(무엇을 먹을지, 무슨 옷을 입을지, 어떤 생일선물을 사줄지 등)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q19",
+      "sectionTitle": "기능수준",
+      "number": "19.",
+      "text": "인지적 기능의 급격한 변화 여부",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q20",
+      "sectionTitle": "기능수준",
+      "number": "20.",
+      "text": "일상 자조능력 상실(약물관리 포함 의식주관련)",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q21",
+      "sectionTitle": "기능수준",
+      "number": "21.",
+      "text": "가정/대인관계/업무 적응력 손상",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 1 },
+        { "value": "option_2", "label": "없다", "score": 0 }
+      ]
+    },
+    {
+      "id": "q22",
+      "sectionTitle": "지지체계",
+      "number": "22.",
+      "text": "실제 도움과 지지를 제공하는 가족, 친구, 기타의 존재가 있습니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 0 },
+        { "value": "option_2", "label": "없다", "score": 1 }
+      ]
+    },
+    {
+      "id": "q23",
+      "sectionTitle": "지지체계",
+      "number": "23.",
+      "text": "현재 도움을 주지는 않으나 제공가능한 가족, 친구, 기타의 존재가 있습니까?",
+      "required": true,
+      "options": [
+        { "value": "option_1", "label": "있다", "score": 0 },
+        { "value": "option_2", "label": "없다", "score": 1 }
+      ]
+    }
+  ],
+  "scoring": {
+    "type": "cri",
+    "groupLabels": {
+      "harm": "자타해 위험",
+      "mental": "정신상태",
+      "function": "기능수준",
+      "support": "지지체계"
+    },
+    "groupQuestionIds": {
+      "harm": ["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8"],
+      "mental": ["q9", "q10", "q11", "q12", "q13", "q14"],
+      "function": ["q15", "q16", "q17", "q18", "q19", "q20", "q21"],
+      "support": ["q22", "q23"]
+    },
+    "primaryRiskQuestionId": "q1",
+    "psychosisRiskQuestionId": "q8",
+    "grades": {
+      "A": {
+        "label": "A등급 (극도의 위기)",
+        "description": "정신건강전문요원, 경찰, 119구급대원 공조하여 정신과 응급입원 필요",
+        "flagLevel": "warn",
+        "flagText": "극도의 위기 수준으로 즉시 응급평가와 안전 확보가 필요합니다."
+      },
+      "B": {
+        "label": "B등급 (위기)",
+        "description": "현재 또는 과거 자살/자해 경험이 있는 경우 정신과 외래치료 및 전문가 연계 필요(단, 단순 폭력상황이라고 판단되는 경우 경찰에 인계)",
+        "flagLevel": "warn",
+        "flagText": "위기 수준으로 신속한 전문기관 연계가 필요합니다."
+      },
+      "C": {
+        "label": "C등급 (고위험)",
+        "description": "현재 자해위험은 있거나 과거(최근) 자해 이력이 있고 정신과적 증상이 관찰되는 경우로 고위험군에 해당, 정신상태, 기능수준, 지지체계 결과를 고려하여 집중관리 필요",
+        "flagLevel": "warn",
+        "flagText": "고위험군으로 집중관찰과 추가 평가가 필요합니다."
+      },
+      "D": {
+        "label": "D등급 (주의)",
+        "description": "과거 자해위험은 있으나 현재 뚜렷한 정신과적 증상이 없는 경우, 또는 과거 자해위험은 없으나 현재 의심되는 정신과적 문제나 증상이 관찰되는 경우로 주의관찰 필요",
+        "flagLevel": "info",
+        "flagText": "주의관찰과 후속 확인이 필요합니다."
+      },
+      "E": {
+        "label": "E등급 (위기 상황 아님)",
+        "description": "위기상황 아님",
+        "flagLevel": ""
+      }
+    },
+    "notes": [
+      "결과해석은 절대적 기준이 아니며 평가자의 종합적 판단이 가장 중요합니다.",
+      "척도 개발: 국립정신건강센터, 2020"
+    ]
+  }
+}

@@ -1,0 +1,823 @@
+{
+  "id": "ies-r",
+  "selfSeq": 8,
+  "title": "사건충격척도(IES-R)",
+  "shortTitle": "IES-R",
+  "recommendedAge": "",
+  "intro": [],
+  "questionPrompt": "아래의 문항은 스트레스를 주는 사건을 경험한 후 사람들이 겪는 어려움에 관한 것 입니다. 사건과 관련하여 지난 7일 동안 얼마나 많이 경험했는지 각각 문항에 선택해주세요.",
+  "source": {
+    "referencePage": "",
+    "institution": "",
+    "citation": "은헌정 등(2005). 한국판 사건충격척도 수정판의 신뢰도 및 타당도 연구. 신경정신의학회지, 44권, 3호, 303-310."
+  },
+  "respondentFields": [
+    {
+      "id": "gender",
+      "label": "성별",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "male",
+          "label": "남"
+        },
+        {
+          "value": "female",
+          "label": "여"
+        }
+      ]
+    },
+    {
+      "id": "age_group",
+      "label": "연령대",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "10s",
+          "label": "10대"
+        },
+        {
+          "value": "20s",
+          "label": "20대"
+        },
+        {
+          "value": "30s",
+          "label": "30대"
+        },
+        {
+          "value": "40s",
+          "label": "40대"
+        },
+        {
+          "value": "50s",
+          "label": "50대"
+        },
+        {
+          "value": "60s",
+          "label": "60대"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "number": "1.",
+      "text": "그 사건을 상기시켜 주는 것들이 그 사건에 대한 감정(느낌)들을 다시 되살아나게 한다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀 없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간 있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이 있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": "2.",
+      "text": "나는 수면을 지속하는데 어려움이 있었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀 없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간 있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이 있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": "3.",
+      "text": "나는 다른 일들로 인해 그 사건을 생각하게 된다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀 없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간 있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이 있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": "4.",
+      "text": "나는 그 사건 이후로 예민하고 화가 난다고 느꼈다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": "5.",
+      "text": "그 사건에 대해 생각하거나 떠오를 때마다 혼란스러워 지기 때문에 회피하려고 했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": "6.",
+      "text": "내가 생각하지 않으려고 해도 그 사건이 생각난다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "number": "7.",
+      "text": "그 사건이 일어나지 않았거나, 현실이 아닌 것처럼 느꼈다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "number": "8.",
+      "text": "그 사건들을 상기시키는 것을 멀리하며 지냈다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "number": "9.",
+      "text": "그 사건의 영상이 나의 마음속에 갑자기 떠오르곤 했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "number": "10.",
+      "text": "나는 신경이 예민해졌고 쉽게 깜짝 놀랐다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "number": "11.",
+      "text": "그 사건에 관해 생각하지 않기 위해 노력했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "number": "12.",
+      "text": "나는 그 사건에 관하여 여전히 많은 감정을 가지고 있다는 것을 알지만 신경 쓰고 싶지 않았다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "number": "13.",
+      "text": "그 사건에 대한 나의 감정은 무감각한 느낌이었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "number": "14.",
+      "text": "나는 마치 사건 당시로 돌아간 것처럼 느끼거나 행동할 때가 있었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q15",
+      "number": "15.",
+      "text": "나는 그 사건이후로 잠들기가 어려웠다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q16",
+      "number": "16.",
+      "text": "나는 그 사건에 대한 강한 감정이 물 밀 듯 밀려오는 것을 느꼈다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q17",
+      "number": "17.",
+      "text": "내 기억에서 그 사건을 지워 버리려고 노력했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q18",
+      "number": "18.",
+      "text": "나는 집중하는데 어려움이 있었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q19",
+      "number": "19.",
+      "text": "그 사건을 떠올리게 하는 어떤 것에도 식은 땀, 호흡곤란, 오심, 심장 두근거림 같은 신체적인 반응을 일으켰다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q20",
+      "number": "20.",
+      "text": "나는 그 사건에 관한 꿈들을 꾼 적이 있었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q21",
+      "number": "21.",
+      "text": "내가 주위를 경계하고 감시하고 있다고 느꼈다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q22",
+      "number": "22.",
+      "text": "나는 그 사건에 대해 이야기 하지 않으려고 노력했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없다",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "약간있다",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "상당히 있다",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "많이있다",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주 있다",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "type": "sum",
+    "bands": [
+      {
+        "min": 0,
+        "max": 17,
+        "label": "낮음",
+        "description": "외상 후 스트레스 반응이 상대적으로 낮은 편입니다."
+      },
+      {
+        "min": 18,
+        "max": 24,
+        "label": "부분 위험",
+        "description": "외상 후 스트레스 반응에 대한 추가 관찰이 필요합니다."
+      },
+      {
+        "min": 25,
+        "max": 88,
+        "label": "고위험",
+        "description": "외상 후 스트레스 반응 고위험군으로 추가 평가가 권장됩니다."
+      }
+    ],
+    "notes": [
+      "self_seq=8은 2026-03-24 확인 기준 사건충격척도(IES-R) 페이지로 응답됩니다.",
+      "총점 25점 이상은 고위험 참고선으로 활용할 수 있습니다."
+    ]
+  },
+  "extractionNotes": [
+    "공개된 참고 페이지 HTML을 바탕으로 구조화했습니다.",
+    "공통 헤더, 푸터, 만족도조사, CMS 내부 hidden input 값은 앱에서 제외했습니다."
+  ]
+}

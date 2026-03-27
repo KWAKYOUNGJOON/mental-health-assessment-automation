@@ -1,0 +1,6 @@
+**
+!Dockerfile
+!package.json
+!scale-screening-web-app/**
+!README.md
+!.gitignore

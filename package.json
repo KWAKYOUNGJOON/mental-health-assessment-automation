@@ -1,0 +1,13 @@
+{
+  "name": "scale-screening-webapp-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "description": "MindMap 다시서기 노숙인 정신건강 척도 관리 웹앱",
+  "scripts": {
+    "start": "node scale-screening-web-app/server.js",
+    "dev": "node scale-screening-web-app/server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

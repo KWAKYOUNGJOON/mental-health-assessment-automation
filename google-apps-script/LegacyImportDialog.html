@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>과거 실적 파일 불러오기</title>
+    <style>
+      :root {
+        --bg: #f4f7f1;
+        --panel: #ffffff;
+        --text: #203124;
+        --subtle: #5f6b62;
+        --line: #d7e2d3;
+        --accent: #2f7d4a;
+        --accent-strong: #215c36;
+        --accent-soft: #e5f3e8;
+        --warn: #b4471f;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #eef5eb 0%, var(--bg) 100%);
+        color: var(--text);
+        font: 14px/1.6 "Pretendard", "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+      }
+
+      .shell {
+        padding: 24px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 22px 20px 18px;
+        box-shadow: 0 18px 40px rgba(33, 92, 54, 0.08);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 22px;
+        line-height: 1.2;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .lead {
+        color: var(--subtle);
+        margin-bottom: 18px;
+      }
+
+      .block {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 14px 12px;
+        background: #fcfdfb;
+        margin-top: 14px;
+      }
+
+      .label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .hint {
+        margin-top: 8px;
+        color: var(--subtle);
+        font-size: 12px;
+      }
+
+      .filebox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      input[type="file"] {
+        display: block;
+        width: 100%;
+      }
+
+      .filename {
+        display: inline-flex;
+        min-height: 38px;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: 11px;
+        background: var(--accent-soft);
+        color: var(--accent-strong);
+        font-weight: 600;
+      }
+
+      .mode-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .mode-card {
+        display: block;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px 14px;
+        cursor: pointer;
+        transition: border-color 0.15s ease, background 0.15s ease;
+      }
+
+      .mode-card:hover {
+        border-color: #aac8b2;
+      }
+
+      .mode-card input {
+        margin-right: 8px;
+      }
+
+      .mode-title {
+        font-weight: 700;
+      }
+
+      .mode-desc {
+        color: var(--subtle);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      .warning {
+        margin-top: 8px;
+        color: var(--warn);
+        font-size: 12px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      button {
+        appearance: none;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .primary {
+        flex: 1;
+        background: var(--accent);
+        color: white;
+      }
+
+      .secondary {
+        background: #edf2ed;
+        color: var(--text);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: wait;
+      }
+
+      .status {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: #f0f4ef;
+        color: var(--subtle);
+        display: none;
+        white-space: pre-line;
+      }
+
+      .status.success {
+        display: block;
+        background: #e8f6eb;
+        color: var(--accent-strong);
+      }
+
+      .status.error {
+        display: block;
+        background: #fcebe4;
+        color: #8b3d1d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <div class="panel">
+        <h1>과거 실적 파일 불러오기</h1>
+        <p class="lead">변환해 둔 <strong>구글시트붙여넣기용 TSV/XLSX</strong> 파일을 선택하면 `원본데이터`에 자동 적재하고 전체 재구성까지 실행합니다.</p>
+
+        <div class="block">
+          <label class="label" for="fileInput">파일 선택</label>
+          <div class="filebox">
+            <input id="fileInput" type="file" accept=".tsv,.txt,.xlsx,.xls,text/tab-separated-values,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+            <span id="fileName" class="filename">선택된 파일 없음</span>
+          </div>
+          <p class="hint">권장 파일명: `..._구글시트붙여넣기용.tsv` 또는 `..._구글시트붙여넣기용.xlsx`</p>
+        </div>
+
+        <div class="block">
+          <span class="label">불러오기 방식</span>
+          <div class="mode-grid">
+            <label class="mode-card">
+              <div>
+                <span class="mode-title"><input type="radio" name="mode" value="append" checked />이어붙이기</span>
+                <div class="mode-desc">기존 `원본데이터` 아래쪽에 새 데이터를 추가합니다. 과거 실적 누적 입력에 권장됩니다.</div>
+              </div>
+            </label>
+            <label class="mode-card">
+              <div>
+                <span class="mode-title"><input type="radio" name="mode" value="replace" />덮어쓰기</span>
+                <div class="mode-desc">`원본데이터` 3행부터 기존 데이터를 지우고 새 파일로 다시 채웁니다.</div>
+              </div>
+            </label>
+          </div>
+          <div class="warning">덮어쓰기는 기존 원본 입력 데이터가 사라집니다. 재적재가 필요한 경우에만 사용하세요.</div>
+        </div>
+
+        <div class="actions">
+          <button id="submitButton" class="primary" type="button">불러오기 실행</button>
+          <button class="secondary" type="button" onclick="google.script.host.close()">닫기</button>
+        </div>
+
+        <div id="status" class="status"></div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+      const fileInput = document.getElementById("fileInput");
+      const fileName = document.getElementById("fileName");
+      const submitButton = document.getElementById("submitButton");
+      const statusBox = document.getElementById("status");
+
+      fileInput.addEventListener("change", function () {
+        const file = fileInput.files && fileInput.files[0];
+        fileName.textContent = file ? file.name : "선택된 파일 없음";
+      });
+
+      submitButton.addEventListener("click", async function () {
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) {
+          renderStatus("파일을 먼저 선택해 주세요.", "error");
+          return;
+        }
+
+        submitButton.disabled = true;
+        renderStatus("파일을 읽고 있습니다...", "");
+
+        try {
+          const mode = getSelectedMode();
+          const fileType = detectFileType(file.name);
+
+          if (fileType === "xlsx") {
+            const buffer = await readFileAsArrayBuffer(file);
+            const rows = extractRowsFromWorkbook(buffer);
+            renderStatus("엑셀을 분석하고 원본데이터에 적재하고 있습니다...", "");
+            runServerImport("importLegacyRawInputRows", {
+              fileName: file.name,
+              mode: mode,
+              rows: rows
+            });
+            return;
+          }
+
+          const content = await readFileAsText(file);
+          renderStatus("원본데이터에 적재하고 있습니다...", "");
+          runServerImport("importLegacyRawInputTsv", {
+            fileName: file.name,
+            mode: mode,
+            content: content
+          });
+        } catch (error) {
+          renderStatus(error && error.message ? error.message : String(error), "error");
+          submitButton.disabled = false;
+        }
+      });
+
+      function readFileAsText(file) {
+        return new Promise(function (resolve, reject) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            resolve(event.target.result || "");
+          };
+          reader.onerror = function () {
+            reject(new Error("파일을 읽지 못했습니다."));
+          };
+          reader.readAsText(file, "utf-8");
+        });
+      }
+
+      function readFileAsArrayBuffer(file) {
+        return new Promise(function (resolve, reject) {
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            resolve(event.target.result);
+          };
+          reader.onerror = function () {
+            reject(new Error("엑셀 파일을 읽지 못했습니다."));
+          };
+          reader.readAsArrayBuffer(file);
+        });
+      }
+
+      function getSelectedMode() {
+        const selected = document.querySelector('input[name="mode"]:checked');
+        return selected ? selected.value : "append";
+      }
+
+      function detectFileType(name) {
+        const lowered = String(name || "").toLowerCase();
+        if (lowered.endsWith(".xlsx") || lowered.endsWith(".xls")) {
+          return "xlsx";
+        }
+        return "tsv";
+      }
+
+      function extractRowsFromWorkbook(buffer) {
+        if (typeof XLSX === "undefined") {
+          throw new Error("엑셀 분석 라이브러리를 불러오지 못했습니다. 네트워크 상태를 확인해 주세요.");
+        }
+
+        const workbook = XLSX.read(buffer, {
+          type: "array",
+          cellDates: false,
+          raw: false
+        });
+        const preferredNames = ["A3붙여넣기용", "원본데이터_변환결과", "원본데이터"];
+        let sheetName = preferredNames.find(function (name) {
+          return workbook.Sheets[name];
+        });
+
+        if (!sheetName) {
+          sheetName = workbook.SheetNames[0];
+        }
+
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, {
+          header: 1,
+          defval: "",
+          raw: false,
+          blankrows: false
+        });
+
+        if (!rows.length) {
+          throw new Error("선택한 엑셀에서 읽을 수 있는 데이터가 없습니다.");
+        }
+
+        if (sheetName === "A3붙여넣기용") {
+          return rows;
+        }
+
+        if (isHeaderWorkbook(rows)) {
+          return rows.slice(2);
+        }
+
+        if (looksLikeFlatHeader(rows[0])) {
+          return rows.slice(1);
+        }
+
+        throw new Error("현재는 변환 완료된 엑셀만 직접 불러올 수 있습니다. '구글시트붙여넣기용.xlsx' 파일을 선택해 주세요.");
+      }
+
+      function isHeaderWorkbook(rows) {
+        return (
+          rows.length >= 2 &&
+          String(rows[0][0] || "").trim() === "공통" &&
+          String(rows[1][0] || "").trim() === "번호"
+        );
+      }
+
+      function looksLikeFlatHeader(row) {
+        return (
+          row &&
+          String(row[0] || "").trim() === "번호" &&
+          String(row[1] || "").trim() === "날짜"
+        );
+      }
+
+      function runServerImport(functionName, payload) {
+        google.script.run
+          .withSuccessHandler(function (result) {
+            const summary = [
+              "불러오기를 완료했습니다.",
+              "",
+              "파일: " + result.fileName,
+              "방식: " + (result.mode === "replace" ? "덮어쓰기" : "이어붙이기"),
+              "적재 행 수: " + result.importedRowCount + "행",
+              "시작 위치: " + result.rawSheetName + "!" + "A" + result.startRow,
+            ];
+
+            if (result.clearedRowCount) {
+              summary.push("지운 기존 행 수: " + result.clearedRowCount + "행");
+            }
+
+            if (result.sanitizedBirthRows && result.sanitizedBirthRows.length) {
+              summary.push("자동으로 비운 잘못된 생년월일: " + result.sanitizedBirthRows.length + "행");
+            }
+
+            if (result.rebuildSummary) {
+              summary.push(
+                "재구성 결과: 기본정보 " + (result.rebuildSummary.baseRecords || 0) +
+                  " / 서비스기록 " + (result.rebuildSummary.serviceRecords || 0) +
+                  " / 공적서비스 " + (result.rebuildSummary.publicServiceRecords || 0)
+              );
+            }
+
+            renderStatus(summary.join("\n"), "success");
+            submitButton.disabled = false;
+          })
+          .withFailureHandler(function (error) {
+            renderStatus(error && error.message ? error.message : String(error), "error");
+            submitButton.disabled = false;
+          })[functionName](payload);
+      }
+
+      function renderStatus(message, tone) {
+        statusBox.textContent = message;
+        statusBox.className = "status" + (tone ? " " + tone : "");
+        statusBox.style.display = message ? "block" : "none";
+      }
+    </script>
+  </body>
+</html>

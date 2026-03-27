@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "scale-screening-web-app",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server.js"],
+      "port": 8134
+    }
+  ]
+}

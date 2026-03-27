@@ -1,0 +1,39 @@
+{
+  "version": "1.0.0",
+  "description": "정신건강팀 연도별 실적 엑셀 파서 설정",
+  "sheet_detection": {
+    "daily_activities_pattern": "^\\d{4}년\\d+월$",
+    "excluded_summary_sheets": [
+      "법인월보고용",
+      "분기보고용",
+      "입원실적",
+      "시설입소실적",
+      "연계실적",
+      "상담현황실적(2023)"
+    ],
+    "hospitalization_sheets": ["입원현황", "전체입원현황", "전체입원현황(15년부터)"],
+    "facility_sheet": "시설입소현황",
+    "counseling_pattern": "^상담현황\\(",
+    "referral_sheet": "연계대장",
+    "case_management_sheets": [
+      "사례관리현황표(주거지원 및 사례관리)",
+      "사례관리현황표(장기모니터링)",
+      "집중사례관리 명단",
+      "2026집중사례관리리스트"
+    ],
+    "other_sheets": {
+      "deaths": "사망자현황",
+      "non_psych_hospitalizations": "정신과외 입원",
+      "hospital_visits": "병원방문교육",
+      "community_resources": "지역사회자원동원",
+      "meetings_education": "회의교육참여",
+      "post_action_cases": "조치후 사례관리",
+      "long_term_inpatients": "장기입원환자"
+    }
+  },
+  "parsing_rules": {
+    "error_values": ["#REF!", "#DIV/0!", "#VALUE!", "#N/A", "#NAME?", "#NUM!", "#NULL!"],
+    "skip_keywords": ["일일누계", "총누계", "누계", "합계", "필독", "정신건강팀 실적"],
+    "resident_id_regex": "^\\d{6}(-?\\d{7}|-\\d)$"
+  }
+}

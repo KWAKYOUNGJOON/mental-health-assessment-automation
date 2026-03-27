@@ -1,0 +1,992 @@
+{
+  "id": "mkpq-16",
+  "selfSeq": 3,
+  "title": "조기정신증(mKPQ-16)",
+  "shortTitle": "mKPQ",
+  "recommendedAge": "청소년 이상",
+  "intro": [],
+  "questionPrompt": "지난 한 달 동안 다음 생각, 느낌, 경험이 있었는지에 대해 ‘예’ 또는 ‘아니오’에 체크해주십시오.\n   술이나 약을 복용하는 동안에만 경험하는 것은 포함하지 않습니다.\n   ‘예’라고 답한 항목에는 해당경험이 얼마나 힘드셨는지 체크해주십시오.",
+  "source": {
+    "referencePage": "",
+    "institution": "",
+    "citation": "Kim SW, Chung YC, Kang YS, Kim JK, Jang JE, Jhon M, et al. Validation of the Korean version of the 16-item Prodromal Questionnaire in a Non-Help- Seeking College Population. Psychiatry Investig 2018;15(2):111-117."
+  },
+  "respondentFields": [
+    {
+      "id": "gender",
+      "label": "성별",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "male",
+          "label": "남"
+        },
+        {
+          "value": "female",
+          "label": "여"
+        }
+      ]
+    },
+    {
+      "id": "age_group",
+      "label": "연령대",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "10s",
+          "label": "10대"
+        },
+        {
+          "value": "20s",
+          "label": "20대"
+        },
+        {
+          "value": "30s",
+          "label": "30대"
+        },
+        {
+          "value": "40s",
+          "label": "40대"
+        },
+        {
+          "value": "50s",
+          "label": "50대"
+        },
+        {
+          "value": "60s",
+          "label": "60대"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "number": "1.",
+      "text": "내가 이전에 즐겨 했던 일이 흥미가 없어진다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q1_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": "2.",
+      "text": "지금 경험하는 일이 마치 전에도 똑같이 일어났던 것처럼 느껴질 때가 종종 있다(데자뷰).",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q2_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": "3.",
+      "text": "나는 때때로 다른 사람들이 느끼지 못하는 냄새나 맛을 느낀다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q3_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": "4.",
+      "text": "나는 쿵, 찰칵, 쉿, 짝짝, 딸랑딸랑 거리는 등의 특이한 소리를 종종 듣는다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q4_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": "5.",
+      "text": "때로는 내가 경험한 상황이 실제인지 상상인지 헷갈릴 때가 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q5_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": "6.",
+      "text": "내가 다른 사람을 쳐다보거나 거울 속의 내 자신을 볼 때, 내 눈 바로 앞에서 얼굴이 바뀌는 것을 본 적이 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q6_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "number": "7.",
+      "text": "나는 사람을 처음 만날 때 극도로 불안해진다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q7_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "number": "8.",
+      "text": "다른 사람들이 확실히 볼 수 없는 것들을 본 적이 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q8_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "number": "9.",
+      "text": "내 생각들은 가끔 너무 강렬해져서 마치 실제로 내게 말하는 것처럼 느낄 때가 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q9_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "number": "10.",
+      "text": "나는 때때로 광고나 상품 진열대 또는 내 주변에 배치된 것들에서 특별한 의미를 발견한다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q10_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "number": "11.",
+      "text": "때때로 나는 내 아이디어나 생각을 통제하지 못한다고 느낄 때가 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q11_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "number": "12.",
+      "text": "때때로 나는 평소에는 알아채지 못했을 희미한 소리에 갑자기 정신이 산만해 진다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q12_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "number": "13.",
+      "text": "다른 사람들이 듣지 못하는 속삼임이나 말소리를 들은 적이 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q13_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "number": "14.",
+      "text": "나는 다른 사람들이 내게 앙심을 품고 있다고 느낀 적이 종종 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q14_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "약간",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q15",
+      "number": "15.",
+      "text": "보이진 않지만, 어떤 사람이나 힘이 내 주위에 존재하는 느낌을 받은 적이 있다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q15_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q16",
+      "number": "16.",
+      "text": "나는 내 몸의 일부가 어떤 면에서 달라졌거나, 이전과 다르게 움직이고 있다고 느낀다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q16_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q17",
+      "number": "17.",
+      "text": "가끔 나에 대한 음모(모함)가 있다는 느낌이 든다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q17_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q18",
+      "number": "18.",
+      "text": "사람들이 말을 길게 하면 말뜻을 정확히 이해하기 어렵다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q18_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "q19",
+      "number": "19.",
+      "text": "그럴 리가 없는데 가끔 어떤 사건이나 방송들이 나와 관련이 있는 것 같다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "예",
+          "score": 1
+        },
+        {
+          "value": "option_2",
+          "label": "아니오",
+          "score": 0
+        }
+      ],
+      "subQuestions": [
+        {
+          "id": "q19_sub1",
+          "number": "Q1.",
+          "label": "얼마나 힘드셨는지 체크해주십시오",
+          "required": true,
+          "options": [
+            {
+              "value": "option_1",
+              "label": "없다",
+              "score": 0
+            },
+            {
+              "value": "option_2",
+              "label": "약간",
+              "score": 1
+            },
+            {
+              "value": "option_3",
+              "label": "보통",
+              "score": 2
+            },
+            {
+              "value": "option_4",
+              "label": "심함",
+              "score": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "type": "endorsement_with_distress",
+    "summaryLabel": "예 응답 수와 힘듦 정도 요약",
+    "referenceCutoff": "문헌상 16문항 버전 cut-off 7점 참고",
+    "referenceWarning": "현재 공식 selfCare 페이지는 2026-03-24 기준 19개 표시 문항 구조라서, 16문항 절단값을 그대로 적용하기에는 한계가 있습니다.",
+    "notes": [
+      "예 응답 수와 힘듦 보조합계를 함께 보고 면담 판단에 활용하세요.",
+      "양성 의심 시 정신건강의학과 또는 조기정신증 평가 연계가 필요합니다."
+    ]
+  },
+  "extractionNotes": [
+    "공개된 참고 페이지 HTML을 바탕으로 구조화했습니다.",
+    "공통 헤더, 푸터, 만족도조사, CMS 내부 hidden input 값은 앱에서 제외했습니다."
+  ]
+}

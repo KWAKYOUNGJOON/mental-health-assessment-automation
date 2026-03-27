@@ -1,0 +1,362 @@
+{
+  "id": "phq-9",
+  "selfSeq": 1,
+  "title": "우울(PHQ-9)",
+  "shortTitle": "PHQ-9",
+  "recommendedAge": "만19세 이상",
+  "intro": [],
+  "questionPrompt": "지난 2주간, 얼마나 자주 다음과 같은 문제들로 곤란을 겪으셨습니까?",
+  "source": {
+    "referencePage": "",
+    "institution": "",
+    "citation": "박승진, 최혜라, 최지혜, 김건우, 홍진표(2010), 한글판 우울증선별도구(Patient Health Questionnaire-9, PHQ-9)의 신뢰도와 타당도. 대한불안의학회지 6, 119-24."
+  },
+  "respondentFields": [
+    {
+      "id": "gender",
+      "label": "성별",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "male",
+          "label": "남"
+        },
+        {
+          "value": "female",
+          "label": "여"
+        }
+      ]
+    },
+    {
+      "id": "age_group",
+      "label": "연령대",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "10s",
+          "label": "10대"
+        },
+        {
+          "value": "20s",
+          "label": "20대"
+        },
+        {
+          "value": "30s",
+          "label": "30대"
+        },
+        {
+          "value": "40s",
+          "label": "40대"
+        },
+        {
+          "value": "50s",
+          "label": "50대"
+        },
+        {
+          "value": "60s",
+          "label": "60대"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "number": "1.",
+      "text": "기분이 가라앉거나 우울하거나 희망이 없다고 느꼈다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": "2.",
+      "text": "평소 하던 일에 대한 흥미가 없어지거나 즐거움을 느끼지 못했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": "3.",
+      "text": "잠들기가 어렵거나 자주 깼다. / 혹은 너무 많이 잤다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": "4.",
+      "text": "평소보다 식욕이 줄었다. / 혹은 평소보다 많이 먹었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": "5.",
+      "text": "다른 사람들이 눈치 챌 정도로 평소보다 말과 행동이 느려졌다. / 혹은 너무 안절부절 못해서 가만히 앉아있을 수 없다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": "6.",
+      "text": "피곤하고 기운이 없었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "number": "7.",
+      "text": "내가 잘못했거나, 실패했다는 생각이 들었다. / 혹은 자신과 가족을 실망시켰다고 생각했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "number": "8.",
+      "text": "신문을 읽거나 TV를 보는 것과 같은 일상적인 일에도 집중할 수가 없었다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "number": "9.",
+      "text": "차라리 죽는 것이 더 낫겠다고 생각했다. / 혹은 자해할 생각을 했다.",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "2~6일",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "7~12일",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "거의 매일",
+          "score": 3
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "type": "sum",
+    "bands": [
+      {
+        "min": 0,
+        "max": 4,
+        "label": "낮음",
+        "description": "우울 증상 수준이 낮은 편입니다."
+      },
+      {
+        "min": 5,
+        "max": 9,
+        "label": "경도",
+        "description": "가벼운 우울 증상이 시사됩니다."
+      },
+      {
+        "min": 10,
+        "max": 14,
+        "label": "중등도",
+        "description": "중등도 수준의 우울 증상이 시사됩니다."
+      },
+      {
+        "min": 15,
+        "max": 19,
+        "label": "중증도-중등",
+        "description": "임상적 평가가 필요한 수준의 우울 증상이 시사됩니다."
+      },
+      {
+        "min": 20,
+        "max": 27,
+        "label": "고도",
+        "description": "높은 수준의 우울 증상이 시사됩니다."
+      }
+    ],
+    "suicideFlagQuestionId": "q9",
+    "notes": [
+      "PHQ-9 총점은 참고용이며 진단을 대신하지 않습니다.",
+      "9번 문항이 1점 이상이면 즉시 추가 면담과 안전 확인이 필요합니다."
+    ]
+  },
+  "extractionNotes": [
+    "공개된 참고 페이지 HTML을 바탕으로 구조화했습니다.",
+    "공통 헤더, 푸터, 만족도조사, CMS 내부 hidden input 값은 앱에서 제외했습니다."
+  ]
+}

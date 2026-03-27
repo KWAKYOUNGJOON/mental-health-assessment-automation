@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>MindMap 다시서기 | 로그인</title>
+    <style>
+      :root {
+        --bg: #f3f7f3;
+        --panel: rgba(255,255,255,.96);
+        --ink: #153228;
+        --subtle: #5f746a;
+        --line: rgba(19, 50, 40, 0.12);
+        --brand: #1b6b4f;
+        --accent: #ffc000;
+        --danger: #c94b49;
+        --shadow: 0 18px 40px rgba(18, 52, 40, 0.12);
+        --radius: 22px;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255, 192, 0, 0.12), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(27, 107, 79, 0.08), transparent 24%),
+          var(--bg);
+        color: var(--ink);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 24px;
+      }
+      .auth-shell {
+        width: min(1040px, 100%);
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(320px, 420px);
+        gap: 24px;
+        align-items: stretch;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: calc(var(--radius) + 6px);
+        box-shadow: var(--shadow);
+      }
+      .hero {
+        padding: 28px;
+        display: grid;
+        gap: 14px;
+        align-content: center;
+        position: relative;
+        padding-top: 132px;
+        background:
+          radial-gradient(circle at top right, rgba(255, 192, 0, 0.16), transparent 28%),
+          radial-gradient(circle at bottom left, rgba(27, 107, 79, 0.08), transparent 24%),
+          linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,251,248,.94));
+      }
+      .hero-logo {
+        position: absolute;
+        top: 28px;
+        left: 28px;
+        width: min(220px, 48%);
+        display: block;
+      }
+      .hero-logo img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .eyebrow {
+        margin: 0;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--brand);
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+        line-height: 1.06;
+        white-space: nowrap;
+        letter-spacing: -0.02em;
+        color: var(--accent);
+        text-shadow: 0 2px 0 rgba(0,0,0,.42), 0 10px 24px rgba(0,0,0,.14);
+        -webkit-text-stroke: 1px rgba(0,0,0,.42);
+      }
+      .hero p { margin: 0; }
+      .hero-subtitle {
+        max-width: 28rem;
+        color: var(--subtle);
+        font-size: 1.05rem;
+        line-height: 1.7;
+      }
+      .note {
+        align-self: start;
+        justify-self: start;
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: rgba(255, 192, 0, 0.12);
+        border: 1px solid rgba(255, 192, 0, 0.22);
+        font-weight: 700;
+        color: #7a5a00;
+      }
+      .card {
+        padding: 28px;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .card-head h2 { margin: 0; font-size: 1.25rem; }
+      .status-inline { margin: 0; color: var(--subtle); line-height: 1.6; }
+      .status-inline.success { color: var(--brand); }
+      .status-inline.error { color: var(--danger); }
+      .field { display: grid; gap: 8px; }
+      .field span { font-weight: 700; color: var(--subtle); }
+      .field input {
+        width: 100%;
+        border: 1px solid rgba(21, 50, 40, 0.14);
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: #fbfdfb;
+        color: var(--ink);
+        font: inherit;
+      }
+      .form { display: grid; gap: 14px; margin-top: 12px; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+      .ghost-btn, .primary-btn {
+        border: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+        font: inherit;
+      }
+      .ghost-btn { padding: 10px 14px; background: #edf3ef; color: var(--ink); }
+      .primary-btn {
+        padding: 12px 18px;
+        background: linear-gradient(135deg, var(--brand), #2a8967);
+        color: #fff;
+        box-shadow: 0 10px 24px rgba(27, 107, 79, 0.18);
+        min-width: 160px;
+      }
+      .ghost-btn:hover, .primary-btn:hover { transform: translateY(-1px); }
+      .primary-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+      .footnote {
+        margin: 16px 0 0;
+        color: var(--subtle);
+        line-height: 1.7;
+      }
+      @media (max-width: 1200px) {
+        .auth-shell { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 720px) {
+        body { padding: 16px; }
+        .hero, .card { padding: 16px; }
+        .hero {
+          padding-top: 104px;
+        }
+        .hero-logo {
+          top: 16px;
+          left: 16px;
+          width: min(170px, 52%);
+        }
+        h1 {
+          font-size: clamp(1.55rem, 6.2vw, 2.2rem);
+        }
+        .card-head { display: grid; align-items: stretch; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="auth-shell">
+      <section class="hero panel">
+        <div class="hero-logo" aria-hidden="true">
+          <img id="heroLogoImage" src="" alt="다시서기종합지원센터 CI" />
+        </div>
+        <p class="eyebrow">Apps Script Web App</p>
+        <h1 id="authAppName">MindMap 다시서기</h1>
+        <p id="authAppSubtitle" class="hero-subtitle">노숙인 정신건강 척도 관리 웹앱</p>
+        <p class="note">승인된 계정으로 로그인할 수 있습니다.</p>
+      </section>
+
+      <section class="panel card">
+        <div class="card-head">
+          <h2>로그인</h2>
+        </div>
+        <p id="loginMessage" class="status-inline">아이디와 비밀번호를 입력해주세요.</p>
+        <form id="loginForm" class="form">
+          <label class="field">
+            <span>아이디</span>
+            <input type="text" id="loginUsername" autocomplete="username" placeholder="아이디" />
+          </label>
+          <label class="field">
+            <span>비밀번호</span>
+            <input type="password" id="loginPassword" autocomplete="current-password" placeholder="비밀번호" />
+          </label>
+          <div class="actions">
+            <button type="submit" id="loginBtn" class="primary-btn">로그인</button>
+            <a id="openSignupBtn" class="ghost-btn" href="#">가입신청</a>
+          </div>
+        </form>
+        <p class="footnote">계정이 없으면 가입신청을 접수하고 관리자 승인 후 로그인할 수 있습니다.</p>
+      </section>
+    </main>
+
+    <script>
+      window.__BOOTSTRAP__ = <?!= bootstrapJson ?>;
+      window.__DASHISEOGI_CI__ = <?!= JSON.stringify(dashiseogiCiDataUri) ?>;
+    </script>
+    <script>
+      (() => {
+        "use strict";
+
+        const SESSION_TOKEN_KEY = "mindmap_apps_script_session_token_v1";
+        const SESSION_USERNAME_KEY = "mindmap_apps_script_session_username_v1";
+        const ui = {};
+
+        document.addEventListener("DOMContentLoaded", init);
+
+        function init() {
+          [
+            "authAppName", "authAppSubtitle", "heroLogoImage", "loginForm", "loginUsername", "loginPassword",
+            "loginMessage", "loginBtn", "openSignupBtn"
+          ].forEach((id) => { ui[id] = document.getElementById(id); });
+
+          const bootstrap = window.__BOOTSTRAP__ || {};
+          ui.authAppName.textContent = bootstrap.appName || "MindMap 다시서기";
+          ui.authAppSubtitle.textContent = bootstrap.subtitle || "노숙인 정신건강 척도 관리 웹앱";
+          if (ui.heroLogoImage && window.__DASHISEOGI_CI__) {
+            ui.heroLogoImage.src = window.__DASHISEOGI_CI__;
+          }
+          ui.loginMessage.textContent = bootstrap.loginHint || "아이디와 비밀번호를 입력해주세요.";
+          ui.loginUsername.value = localStorage.getItem(SESSION_USERNAME_KEY) || "";
+          document.title = `${ui.authAppName.textContent} | 로그인`;
+
+          ui.loginForm.addEventListener("submit", onLoginSubmit);
+          ui.openSignupBtn.addEventListener("click", goToSignupPage);
+          ui.loginUsername.addEventListener("input", persistUsername);
+          ui.openSignupBtn.href = buildPageUrl("signup");
+        }
+
+        function persistUsername() {
+          const value = ui.loginUsername.value.trim();
+          if (value) localStorage.setItem(SESSION_USERNAME_KEY, value);
+          else localStorage.removeItem(SESSION_USERNAME_KEY);
+        }
+
+        function buildPageUrl(pageMode) {
+          const bootstrap = window.__BOOTSTRAP__ || {};
+          const cachedBase = bootstrap.webAppUrl || bootstrap.loginUrl || "";
+          const baseUrl = cachedBase || window.location.href;
+          const url = new URL(baseUrl);
+
+          if (pageMode === "signup") {
+            url.searchParams.set("page", "signup");
+          } else if (pageMode === "app") {
+            url.searchParams.set("page", "app");
+          } else {
+            url.searchParams.delete("page");
+            url.searchParams.delete("view");
+          }
+
+          url.searchParams.set("cb", Date.now().toString(36));
+          url.searchParams.delete("format");
+          url.searchParams.delete("sessionToken");
+          url.searchParams.delete("token");
+          return url.toString();
+        }
+
+        function navigateTop(url) {
+          if (window.top && window.top !== window) {
+            window.top.location.href = url;
+            return;
+          }
+          window.location.href = url;
+        }
+
+        function goToSignupPage(event) {
+          if (event) event.preventDefault();
+          navigateTop(buildPageUrl("signup"));
+        }
+
+        function setLoginMessage(message, type) {
+          ui.loginMessage.textContent = message;
+          ui.loginMessage.className = `status-inline${type ? ` ${type}` : ""}`;
+        }
+
+        function onLoginSubmit(event) {
+          event.preventDefault();
+          const username = ui.loginUsername.value.trim();
+          const password = ui.loginPassword.value;
+
+          if (!username || !password) {
+            setLoginMessage("아이디와 비밀번호를 모두 입력해주세요.", "error");
+            return;
+          }
+
+          ui.loginBtn.disabled = true;
+          setLoginMessage("로그인하는 중입니다.", "");
+          google.script.run.withSuccessHandler((response) => {
+            ui.loginBtn.disabled = false;
+            if (!response?.authenticated || !response?.sessionToken) {
+              setLoginMessage(response?.loginHint || "로그인 정보를 확인해주세요.", "error");
+              ui.loginPassword.select();
+              ui.loginPassword.focus();
+              return;
+            }
+
+            localStorage.setItem(SESSION_TOKEN_KEY, response.sessionToken);
+            localStorage.setItem(SESSION_USERNAME_KEY, username);
+            navigateTop(buildPageUrl("app"));
+          }).withFailureHandler((error) => {
+            ui.loginBtn.disabled = false;
+            setLoginMessage(error?.message || "로그인에 실패했습니다.", "error");
+            ui.loginPassword.select();
+            ui.loginPassword.focus();
+          }).loginScaleWebapp(username, password);
+        }
+      })();
+    </script>
+  </body>
+</html>

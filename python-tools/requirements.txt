@@ -1,0 +1,5 @@
+numpy
+openai
+openpyxl
+pandas
+google-generativeai

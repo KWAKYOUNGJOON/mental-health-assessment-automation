@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>정신건강팀 실적 DB 앱</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-bg"></div>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">다시서기종합지원센터</p>
+          <h1>정신건강팀 실적 DB 및 보고서 자동화 앱</h1>
+          <p class="sub-title">
+            엑셀 업로드 → 주제별 파싱 → 정형 DB 저장 → 월/분기 보고서 생성
+          </p>
+        </div>
+        <div class="header-controls">
+          <label class="field-inline">
+            <span>권한</span>
+            <select id="roleSelect">
+              <option value="social_worker">정신건강사회복지사</option>
+              <option value="team_lead">팀장</option>
+              <option value="corp_reporter">법인 보고 담당</option>
+            </select>
+          </label>
+          <button id="backupBtn" class="btn btn-secondary">백업(JSON)</button>
+          <button id="clearDbBtn" class="btn btn-danger">DB 초기화</button>
+        </div>
+      </header>
+
+      <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="upload">1. 엑셀 업로드</button>
+        <button class="tab-btn" data-tab="data">2. 데이터 현황</button>
+        <button class="tab-btn" data-tab="report">3. 보고서 생성</button>
+      </nav>
+
+      <section class="tab-panel active" id="tab-upload">
+        <div class="card">
+          <h2>연도별 엑셀 업로드</h2>
+          <p class="hint">
+            2025/2026 파일을 동시에 업로드할 수 있습니다. 병합 또는 해당 연도
+            덮어쓰기 모드를 선택하세요.
+          </p>
+          <div class="upload-grid">
+            <label class="file-input-wrap">
+              <input id="excelFiles" type="file" accept=".xlsx,.xlsm" multiple />
+              <span>엑셀 파일 선택</span>
+            </label>
+            <div class="field-group">
+              <span class="label">업로드 모드</span>
+              <label><input type="radio" name="importMode" value="merge" checked /> 병합</label>
+              <label><input type="radio" name="importMode" value="overwrite" /> 연도 덮어쓰기</label>
+            </div>
+            <button id="importBtn" class="btn btn-primary">업로드 및 파싱 시작</button>
+          </div>
+          <ul id="selectedFiles" class="file-list"></ul>
+          <div id="importStatus" class="status-box"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>파싱 오류 및 예외 목록</h2>
+            <button id="refreshErrorsBtn" class="btn btn-secondary">새로고침</button>
+          </div>
+          <div class="table-wrap">
+            <table id="errorTable">
+              <thead>
+                <tr>
+                  <th>시간</th>
+                  <th>파일</th>
+                  <th>시트</th>
+                  <th>행</th>
+                  <th>열</th>
+                  <th>코드</th>
+                  <th>메시지</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-data">
+        <div class="card">
+          <div class="card-head">
+            <h2>테이블별 적재 건수</h2>
+            <button id="refreshDataBtn" class="btn btn-secondary">새로고침</button>
+          </div>
+          <div id="summaryCards" class="summary-grid"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>데이터 미리보기</h2>
+            <div class="inline-controls">
+              <label class="field-inline">
+                <span>테이블</span>
+                <select id="previewTableSelect"></select>
+              </label>
+              <label class="field-inline">
+                <span>표시 행수</span>
+                <select id="previewLimit">
+                  <option value="20">20</option>
+                  <option value="50" selected>50</option>
+                  <option value="100">100</option>
+                </select>
+              </label>
+              <button id="loadPreviewBtn" class="btn btn-primary">불러오기</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table id="previewTable">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="tab-report">
+        <div class="card">
+          <h2>보고서 생성 조건</h2>
+          <div class="report-grid">
+            <label class="field-inline">
+              <span>연도</span>
+              <select id="reportYear"></select>
+            </label>
+            <label class="field-inline">
+              <span>기간 타입</span>
+              <select id="periodType">
+                <option value="monthly">월별</option>
+                <option value="quarterly">분기별</option>
+                <option value="annual">연간</option>
+              </select>
+            </label>
+            <label class="field-inline" id="monthWrap">
+              <span>월</span>
+              <select id="reportMonth"></select>
+            </label>
+            <label class="field-inline hidden" id="quarterWrap">
+              <span>분기</span>
+              <select id="reportQuarter">
+                <option value="1">1분기</option>
+                <option value="2">2분기</option>
+                <option value="3">3분기</option>
+                <option value="4">4분기</option>
+              </select>
+            </label>
+            <label class="field-inline report-type">
+              <span>보고서 유형</span>
+              <select id="reportType">
+                <option value="monthly_corporate">법인 월보고</option>
+                <option value="quarterly_integrated">분기 통합 활동실적</option>
+                <option value="admission_facility">입원·시설입소 현황</option>
+                <option value="counseling_stats">상담 통계</option>
+                <option value="case_management">사례관리 현황</option>
+                <option value="other_management">기타 관리 보고</option>
+              </select>
+            </label>
+            <button id="generateReportBtn" class="btn btn-primary">보고서 생성</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h2>보고서 결과</h2>
+            <div class="inline-controls">
+              <button id="exportCsvBtn" class="btn btn-secondary">CSV 내보내기</button>
+              <button id="printPdfBtn" class="btn btn-secondary">인쇄(PDF)</button>
+            </div>
+          </div>
+          <article id="reportOutput" class="report-output">
+            보고서 생성 버튼을 눌러주세요.
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dexie@4.0.8/dist/dexie.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

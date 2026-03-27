@@ -1,0 +1,414 @@
+{
+  "id": "audit-k",
+  "slug": "alcohol-use-disorder-identification-test-korea",
+  "title": "알코올중독(AUDIT-K)",
+  "shortTitle": "AUDIT-K",
+  "recommendedAge": "성인 이상",
+  "category": "자가검진",
+  "source": {
+    "referencePage": "",
+    "institution": "",
+    "citation": "조근호, 채숙희, 박애란, 이해국, 신임희, 민성호(2009). 위험 음주자의 선별을 위한 한국어판 Alcohol Use Disorders Identification Test(AUDIT-K)의 최적 절단값. J. Korean Academy of Addiction Psychiatry, 13(1), 34-40"
+  },
+  "intro": [],
+  "respondentFields": [
+    {
+      "id": "gender",
+      "label": "성별",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "male",
+          "label": "남"
+        },
+        {
+          "value": "female",
+          "label": "여"
+        }
+      ]
+    },
+    {
+      "id": "age_group",
+      "label": "연령대",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "10s",
+          "label": "10대"
+        },
+        {
+          "value": "20s",
+          "label": "20대"
+        },
+        {
+          "value": "30s",
+          "label": "30대"
+        },
+        {
+          "value": "40s",
+          "label": "40대"
+        },
+        {
+          "value": "50s",
+          "label": "50대"
+        },
+        {
+          "value": "60s",
+          "label": "60대"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "number": 1,
+      "text": "술은 얼마나 자주 마십니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "never",
+          "label": "전혀 마시지 않는다.",
+          "score": 0
+        },
+        {
+          "value": "less_than_monthly",
+          "label": "한달에 한 번 미만",
+          "score": 1
+        },
+        {
+          "value": "two_to_four_per_month",
+          "label": "한달에 2~4회",
+          "score": 2
+        },
+        {
+          "value": "two_to_three_per_week",
+          "label": "1주일에 2~3회",
+          "score": 3
+        },
+        {
+          "value": "four_or_more_per_week",
+          "label": "1주일에 4회 이상",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": 2,
+      "text": "평소 술을 마시는 날 몇잔 정도나 마십니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "1_2",
+          "label": "1~2잔",
+          "score": 0
+        },
+        {
+          "value": "3_4",
+          "label": "3~4잔",
+          "score": 1
+        },
+        {
+          "value": "5_6",
+          "label": "5~6잔",
+          "score": 2
+        },
+        {
+          "value": "7_9",
+          "label": "7~9잔",
+          "score": 3
+        },
+        {
+          "value": "10_or_more",
+          "label": "10잔 이상",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": 3,
+      "text": "한 번 술을 마실 때 소주 1병 또는 맥주 4병 이상의 음주는 얼마나 자주 하십니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "never",
+          "label": "전혀 없다.",
+          "score": 0
+        },
+        {
+          "value": "less_than_monthly",
+          "label": "한달에 1번 미만",
+          "score": 1
+        },
+        {
+          "value": "monthly",
+          "label": "한달에 한 번",
+          "score": 2
+        },
+        {
+          "value": "weekly",
+          "label": "일주일에 한 번",
+          "score": 3
+        },
+        {
+          "value": "daily",
+          "label": "매일 같이",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": 4,
+      "text": "지난 1년간 술을 한 번 마시기 시작하면 멈출 수 없다는 것을 안 때가 얼마나 자주 있었습니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "never",
+          "label": "전혀 없다.",
+          "score": 0
+        },
+        {
+          "value": "less_than_monthly",
+          "label": "한달에 1번 미만",
+          "score": 1
+        },
+        {
+          "value": "monthly",
+          "label": "한달에 한 번",
+          "score": 2
+        },
+        {
+          "value": "weekly",
+          "label": "일주일에 한 번",
+          "score": 3
+        },
+        {
+          "value": "daily",
+          "label": "매일 같이",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": 5,
+      "text": "지난 1년간 평소 같으면 할 수 있었던 일을 음주 때문에 실패한 적이 얼마나 자주 있었습니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "never",
+          "label": "전혀 없다.",
+          "score": 0
+        },
+        {
+          "value": "less_than_monthly",
+          "label": "한달에 1번 미만",
+          "score": 1
+        },
+        {
+          "value": "monthly",
+          "label": "한달에 한 번",
+          "score": 2
+        },
+        {
+          "value": "weekly",
+          "label": "일주일에 한 번",
+          "score": 3
+        },
+        {
+          "value": "daily",
+          "label": "매일 같이",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": 6,
+      "text": "지난 1년간 술을 마신 다음날 아침에 일을 나가기 위해 다시 해장술이 필요했던 적이 얼마나 자주 있었습니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "never",
+          "label": "전혀 없다.",
+          "score": 0
+        },
+        {
+          "value": "less_than_monthly",
+          "label": "한달에 1번 미만",
+          "score": 1
+        },
+        {
+          "value": "monthly",
+          "label": "한달에 한 번",
+          "score": 2
+        },
+        {
+          "value": "weekly",
+          "label": "일주일에 한 번",
+          "score": 3
+        },
+        {
+          "value": "daily",
+          "label": "매일 같이",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "number": 7,
+      "text": "지난 1년간 음주 후에 죄책감이 들거나 후회를 한 적이 얼마나 자주 있었습니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "never",
+          "label": "전혀 없다.",
+          "score": 0
+        },
+        {
+          "value": "less_than_monthly",
+          "label": "한달에 1번 미만",
+          "score": 1
+        },
+        {
+          "value": "monthly",
+          "label": "한달에 한 번",
+          "score": 2
+        },
+        {
+          "value": "weekly",
+          "label": "일주일에 한 번",
+          "score": 3
+        },
+        {
+          "value": "daily",
+          "label": "매일 같이",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "number": 8,
+      "text": "지난 1년간 음주 때문에 전날 밤에 있었던 일이 기억나지 않았던 적이 얼마나 자주 있었습니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "never",
+          "label": "전혀 없다.",
+          "score": 0
+        },
+        {
+          "value": "less_than_monthly",
+          "label": "한달에 1번 미만",
+          "score": 1
+        },
+        {
+          "value": "monthly",
+          "label": "한달에 한 번",
+          "score": 2
+        },
+        {
+          "value": "weekly",
+          "label": "일주일에 한 번",
+          "score": 3
+        },
+        {
+          "value": "daily",
+          "label": "매일 같이",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "number": 9,
+      "text": "음주로 인해 자신이나 다른 사람이 다친 적이 있습니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "no",
+          "label": "없었다.",
+          "score": 0
+        },
+        {
+          "value": "yes_not_last_year",
+          "label": "있지만, 지난 1년간에는 없었다.",
+          "score": 2
+        },
+        {
+          "value": "yes_last_year",
+          "label": "지난 1년간 있었다.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "number": 10,
+      "text": "친척이나 친구, 의사가 당신이 술 마시는 것을 걱정 하거나 술 끊기를 권유한 적이 있습니까?",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "no",
+          "label": "없었다.",
+          "score": 0
+        },
+        {
+          "value": "yes_not_last_year",
+          "label": "있지만, 지난 1년간에는 없었다.",
+          "score": 2
+        },
+        {
+          "value": "yes_last_year",
+          "label": "지난 1년간 있었다.",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "type": "sum",
+    "questionCount": 10,
+    "minScore": 0,
+    "maxScore": 40,
+    "notes": [
+      "각 선택지 점수는 참조 HTML의 선택지 옆 숫자(count)를 기준으로 구조화했다.",
+      "참조 HTML에는 결과 해석 기준과 절단값이 직접 노출되어 있지 않으므로, 실제 운영 전에 별도 검증이 필요하다."
+    ]
+  },
+  "uiHints": {
+    "sections": [
+      {
+        "id": "respondent",
+        "title": "응답자 정보"
+      },
+      {
+        "id": "questions",
+        "title": "문항응답"
+      }
+    ],
+    "ctaLabel": "결과보기"
+  },
+  "extractionNotes": [
+    "상단/하단 공통 헤더, 푸터, 사이트맵, SNS 링크, 만족도 조사 영역은 척도앱 핵심 기능과 무관하므로 제외 가능하다.",
+    "원본 페이지의 hidden input self_que_seq 값은 기존 CMS 내부 식별자라서 새 앱에서는 그대로 가져올 필요가 없다.",
+    "원본 페이지의 radio value 값은 내부 선택지 번호이고 실제 점수는 아니다. 새 앱에서는 score 필드를 기준으로 계산해야 한다."
+  ]
+}

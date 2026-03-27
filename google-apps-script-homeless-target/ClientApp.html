@@ -1,0 +1,490 @@
+(() => {
+  "use strict";
+
+  const WORKER_NAME_KEY = "mindmap_apps_script_worker_name_v1";
+  const state = {
+    manifest: [],
+    questionnaires: new Map(),
+    currentId: null,
+    currentQuestionnaire: null,
+    lastResult: null,
+    recentRecords: [],
+    status: window.__BOOTSTRAP__?.status || null,
+    settings: window.__BOOTSTRAP__?.settings || { organizationName: "", teamName: "", contactNote: "" }
+  };
+
+  const ui = {};
+  document.addEventListener("DOMContentLoaded", init);
+
+  function init() {
+    cacheUi();
+    bindEvents();
+    hydrateBundle();
+    applyBootstrap();
+    if (state.manifest.length) loadQuestionnaire(state.manifest[0].id);
+    renderRecentRecords();
+    setStatusMessage("구글 시트 연결을 확인하는 중입니다.", "");
+    google.script.run.withSuccessHandler(handlePrepared).withFailureHandler(handleFailure).prepareScaleWebapp();
+  }
+
+  function cacheUi() {
+    [
+      "appName", "appSubtitle", "currentUserText", "spreadsheetText", "sheetStatsText", "appStatusMessage",
+      "refreshAppBtn", "questionnaireNav", "questionnaireCount", "scaleTitle", "scaleMeta", "resetFormBtn",
+      "printResultBtn", "saveResultBtn", "screeningForm", "sessionDate", "workerName", "clientLabel",
+      "birthDate", "sessionNote", "respondentFields", "questionPrompt", "questionsRoot", "progressLabel",
+      "progressFill", "resultStateChip", "resultEmpty", "resultPanel", "printOrgLine", "printScaleLine",
+      "printMetaLine", "resultTitle", "resultScore", "resultBand", "resultFlags", "resultHighlights",
+      "resultMeta", "resultBreakdown", "resultNotes", "recordsTableBody", "recordsEmpty", "refreshRecordsBtn",
+      "questionTemplate", "radioFieldTemplate"
+    ].forEach((id) => { ui[id] = document.getElementById(id); });
+  }
+
+  function bindEvents() {
+    ui.refreshAppBtn.addEventListener("click", onRefreshApp);
+    ui.refreshRecordsBtn.addEventListener("click", onRefreshRecords);
+    ui.resetFormBtn.addEventListener("click", onResetForm);
+    ui.printResultBtn.addEventListener("click", () => state.lastResult ? window.print() : alert("먼저 결과를 계산해주세요."));
+    ui.saveResultBtn.addEventListener("click", onSaveResult);
+    ui.screeningForm.addEventListener("submit", onSubmit);
+    ui.screeningForm.addEventListener("change", onFormChange);
+    ui.workerName.addEventListener("input", () => {
+      const value = ui.workerName.value.trim();
+      if (value) localStorage.setItem(WORKER_NAME_KEY, value);
+      else localStorage.removeItem(WORKER_NAME_KEY);
+    });
+  }
+
+  function hydrateBundle() {
+    const bundle = window.__SCALE_SCREENING_BUNDLE__ || { manifest: [], questionnaires: {} };
+    state.manifest = Array.isArray(bundle.manifest) ? clone(bundle.manifest) : [];
+    state.questionnaires = new Map(Object.entries(bundle.questionnaires || {}).map(([id, q]) => [id, clone(q)]));
+  }
+
+  function applyBootstrap() {
+    const bootstrap = window.__BOOTSTRAP__ || {};
+    ui.appName.textContent = bootstrap.appName || "MindMap 다시서기";
+    ui.appSubtitle.textContent = bootstrap.subtitle || "노숙인 정신건강 척도 관리 웹앱";
+    ui.questionnaireCount.textContent = `총 ${state.manifest.length}개 척도`;
+    if (bootstrap.status) applyStatusPayload(bootstrap.status);
+    renderNav();
+  }
+
+  function applyStatusPayload(payload) {
+    state.status = clone(payload || {});
+    state.recentRecords = Array.isArray(payload?.recentRecords) ? clone(payload.recentRecords) : [];
+    ui.currentUserText.textContent = payload?.currentUser?.displayName || "조직 계정";
+    ui.spreadsheetText.textContent = payload?.targetSpreadsheetName || payload?.targetSpreadsheetId || "연결 대기";
+    ui.sheetStatsText.textContent = payload?.sheets
+      ? `기록 ${payload.sheets.records || 0}건 / 응답 ${payload.sheets.answers || 0}건 / 척도 ${payload.sheets.questionnaires || 0}건`
+      : "확인 대기";
+    renderRecentRecords();
+  }
+
+  function handlePrepared(data) {
+    applyStatusPayload(data);
+    setStatusMessage("구글 시트 연결과 척도 마스터 동기화를 확인했습니다.", "success");
+  }
+
+  function handleFailure(error) {
+    console.error(error);
+    const message = error?.message || "Apps Script 호출에 실패했습니다.";
+    setStatusMessage(message, "error");
+    alert(message);
+  }
+
+  function setStatusMessage(message, type) {
+    ui.appStatusMessage.textContent = message;
+    ui.appStatusMessage.className = `status-inline${type ? ` ${type}` : ""}`;
+  }
+
+  function renderNav() {
+    ui.questionnaireNav.innerHTML = "";
+    state.manifest.forEach((item) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "nav-btn";
+      button.dataset.id = item.id;
+      button.innerHTML = `<span class="nav-title">${escapeHtml(item.title)}</span><span class="nav-meta">${escapeHtml(item.recommendedAge || "")}</span>`;
+      button.addEventListener("click", () => loadQuestionnaire(item.id));
+      ui.questionnaireNav.appendChild(button);
+    });
+    ui.questionnaireNav.querySelectorAll(".nav-btn").forEach((button) => button.classList.toggle("active", button.dataset.id === state.currentId));
+  }
+
+  function loadQuestionnaire(id) {
+    const questionnaire = state.questionnaires.get(id);
+    if (!questionnaire) return;
+    state.currentId = id;
+    state.currentQuestionnaire = questionnaire;
+    renderNav();
+    ui.scaleTitle.textContent = questionnaire.title;
+    ui.scaleMeta.textContent = [questionnaire.shortTitle || "", questionnaire.recommendedAge ? `권장연령 ${questionnaire.recommendedAge}` : "", questionnaire.questions ? `문항 ${questionnaire.questions.length}개` : ""].filter(Boolean).join(" · ");
+    ui.questionPrompt.textContent = questionnaire.questionPrompt || "";
+    renderRespondentFields(questionnaire.respondentFields || []);
+    renderQuestions(questionnaire.questions || []);
+    ui.screeningForm.reset();
+    applyFormDefaults();
+    clearResult();
+    updateProgress();
+  }
+
+  function renderRespondentFields(fields) {
+    ui.respondentFields.innerHTML = "";
+    fields.forEach((field) => ui.respondentFields.appendChild(buildChoiceField(field, `respondent_${field.id}`, false)));
+  }
+
+  function renderQuestions(questions) {
+    ui.questionsRoot.innerHTML = "";
+    questions.forEach((question) => {
+      const section = ui.questionTemplate.content.firstElementChild.cloneNode(true);
+      section.dataset.questionId = question.id;
+      section.querySelector(".question-number").textContent = question.number || "";
+      section.querySelector(".question-text").textContent = question.text || "";
+      const choiceGrid = section.querySelector(".choice-grid");
+      (question.options || []).forEach((option, index) => choiceGrid.appendChild(buildChoiceCard(question.id, `${question.id}_${index + 1}`, option, true)));
+      const subWrap = section.querySelector(".subquestions");
+      (question.subQuestions || []).forEach((subQuestion) => subWrap.appendChild(buildChoiceField(subQuestion, subQuestion.id, true)));
+      if (!question.subQuestions || !question.subQuestions.length) subWrap.remove();
+      ui.questionsRoot.appendChild(section);
+    });
+  }
+
+  function buildChoiceField(field, inputName, isSubQuestion) {
+    const node = ui.radioFieldTemplate.content.firstElementChild.cloneNode(true);
+    node.dataset.fieldId = field.id;
+    node.querySelector(".field-label").textContent = `${field.label || field.text || ""}${field.required ? " *" : ""}`;
+    if (isSubQuestion) {
+      const number = document.createElement("p");
+      number.className = "question-number";
+      number.textContent = field.number || "Q.";
+      node.prepend(number);
+    }
+    const choiceGrid = node.querySelector(".choice-grid");
+    (field.options || []).forEach((option, index) => choiceGrid.appendChild(buildChoiceCard(inputName, `${inputName}_${index + 1}`, option, !inputName.startsWith("respondent_"))));
+    return node;
+  }
+
+  function buildChoiceCard(inputName, inputId, option, showScore) {
+    const hasScore = option.score !== null && option.score !== undefined && String(option.score).trim() !== "" && !Number.isNaN(Number(option.score));
+    const wrapper = document.createElement("label");
+    wrapper.className = "choice-card";
+    wrapper.setAttribute("for", inputId);
+    wrapper.innerHTML = `<input type="radio" name="${escapeHtml(inputName)}" id="${escapeHtml(inputId)}" value="${escapeHtml(String(option.value))}" data-score="${escapeHtml(hasScore ? String(option.score) : "")}" /><span><span class="choice-label-text">${escapeHtml(option.label || "")}</span>${showScore && hasScore ? `<span class="choice-score">점수 ${escapeHtml(String(option.score))}</span>` : ""}</span>`;
+    return wrapper;
+  }
+
+  function applyFormDefaults() {
+    ui.sessionDate.value = todayForInput();
+    ui.workerName.value = localStorage.getItem(WORKER_NAME_KEY) || state.status?.currentUser?.displayName || "";
+    ui.clientLabel.value = "";
+    ui.birthDate.value = "";
+    ui.sessionNote.value = "";
+  }
+
+  function onFormChange(event) {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) || target.type !== "radio") return;
+    syncSelectedState(target.name);
+    syncSubQuestionsVisibility();
+    updateProgress();
+  }
+
+  function syncSelectedState(groupName) {
+    document.querySelectorAll(`input[name="${cssEscape(groupName)}"]`).forEach((input) => input.closest(".choice-card")?.classList.remove("is-selected"));
+    document.querySelector(`input[name="${cssEscape(groupName)}"]:checked`)?.closest(".choice-card")?.classList.add("is-selected");
+  }
+
+  function syncSubQuestionsVisibility() {
+    const questionnaire = state.currentQuestionnaire;
+    (questionnaire.questions || []).forEach((question) => {
+      if (!question.subQuestions || !question.subQuestions.length) return;
+      const showSubs = shouldShowSubQuestions(question, questionnaire);
+      const subWrap = ui.questionsRoot.querySelector(`[data-question-id="${cssEscape(question.id)}"] .subquestions`);
+      if (!subWrap) return;
+      subWrap.classList.toggle("hidden", !showSubs);
+      if (!showSubs) {
+        subWrap.querySelectorAll('input[type="radio"]').forEach((input) => {
+          input.checked = false;
+          input.closest(".choice-card")?.classList.remove("is-selected");
+        });
+      }
+    });
+  }
+
+  function shouldShowSubQuestions(question, questionnaire) {
+    if (!question.subQuestions || !question.subQuestions.length) return false;
+    if (questionnaire.scoring?.type === "k_mdq" && question.id === "q14") {
+      return (questionnaire.scoring.symptomQuestionIds || []).some((id) => {
+        const checked = document.querySelector(`input[name="${cssEscape(id)}"]:checked`);
+        return Boolean(checked && Number(checked.dataset.score || 0) > 0);
+      });
+    }
+    const checked = document.querySelector(`input[name="${cssEscape(question.id)}"]:checked`);
+    return Boolean(checked && Number(checked.dataset.score || 0) > 0);
+  }
+
+  function validateResponses(questionnaire) {
+    if (!ui.sessionDate.value) return { ok: false, message: "검사일을 입력해주세요.", focusTarget: ui.sessionDate };
+    for (const field of questionnaire.respondentFields || []) {
+      if (!document.querySelector(`input[name="respondent_${cssEscape(field.id)}"]:checked`)) {
+        return { ok: false, message: `응답자 정보의 '${field.label}'을 선택해주세요.` };
+      }
+    }
+    for (const question of questionnaire.questions || []) {
+      if (!document.querySelector(`input[name="${cssEscape(question.id)}"]:checked`)) {
+        return { ok: false, message: `${question.number} 문항에 답변해주세요.` };
+      }
+      if (question.subQuestions && question.subQuestions.length && shouldShowSubQuestions(question, questionnaire)) {
+        for (const subQuestion of question.subQuestions) {
+          if (!document.querySelector(`input[name="${cssEscape(subQuestion.id)}"]:checked`)) {
+            return { ok: false, message: `${question.number} 문항의 추가 질문에 답변해주세요.` };
+          }
+        }
+      }
+    }
+    return { ok: true };
+  }
+
+  function collectAnswers(questionnaire) {
+    const meta = {
+      sessionDate: ui.sessionDate.value,
+      workerName: ui.workerName.value.trim(),
+      clientLabel: ui.clientLabel.value.trim(),
+      birthDate: ui.birthDate.value,
+      sessionNote: ui.sessionNote.value.trim()
+    };
+    const respondent = {};
+    (questionnaire.respondentFields || []).forEach((field) => {
+      const checked = document.querySelector(`input[name="respondent_${cssEscape(field.id)}"]:checked`);
+      respondent[field.id] = checked ? checked.value : null;
+    });
+    const responses = {};
+    (questionnaire.questions || []).forEach((question) => {
+      const checked = document.querySelector(`input[name="${cssEscape(question.id)}"]:checked`);
+      responses[question.id] = checked ? { value: checked.value, score: Number(checked.dataset.score || 0) } : null;
+      (question.subQuestions || []).forEach((subQuestion) => {
+        const subChecked = document.querySelector(`input[name="${cssEscape(subQuestion.id)}"]:checked`);
+        responses[subQuestion.id] = subChecked ? { value: subChecked.value, score: Number(subChecked.dataset.score || 0) } : null;
+      });
+    });
+    return { meta, respondent, responses };
+  }
+
+  function buildProgressSnapshot(questionnaire, payload) {
+    const respondent = payload?.respondent || {};
+    const responses = payload?.responses || payload?.answers || {};
+    const respondentTotal = (questionnaire.respondentFields || []).length;
+    const respondentAnswered = (questionnaire.respondentFields || []).filter((field) => respondent[field.id] !== null && respondent[field.id] !== undefined && String(respondent[field.id]).trim() !== "").length;
+    let questionTotal = 0;
+    let questionAnswered = 0;
+    (questionnaire.questions || []).forEach((question) => {
+      questionTotal += 1;
+      if (responses[question.id]) questionAnswered += 1;
+      if (question.subQuestions && question.subQuestions.length && shouldShowSubQuestionsFromResponses(question, questionnaire, responses)) {
+        question.subQuestions.forEach((subQuestion) => {
+          questionTotal += 1;
+          if (responses[subQuestion.id]) questionAnswered += 1;
+        });
+      }
+    });
+    const total = respondentTotal + questionTotal;
+    const answered = respondentAnswered + questionAnswered;
+    return { answered, total, percent: total ? Math.round((answered / total) * 100) : 0 };
+  }
+
+  function shouldShowSubQuestionsFromResponses(question, questionnaire, responses) {
+    if (!question.subQuestions || !question.subQuestions.length) return false;
+    if (questionnaire.scoring?.type === "k_mdq" && question.id === "q14") {
+      return (questionnaire.scoring.symptomQuestionIds || []).some((id) => Boolean(responses[id] && Number(responses[id].score || 0) > 0));
+    }
+    return Boolean(responses[question.id] && Number(responses[question.id].score || 0) > 0);
+  }
+
+  function updateProgress() {
+    if (!state.currentQuestionnaire) return;
+    const progress = buildProgressSnapshot(state.currentQuestionnaire, collectAnswers(state.currentQuestionnaire));
+    ui.progressFill.style.width = `${progress.percent}%`;
+    ui.progressLabel.textContent = `${progress.percent}%`;
+  }
+
+  function onSubmit(event) {
+    event.preventDefault();
+    const questionnaire = state.currentQuestionnaire;
+    const validation = validateResponses(questionnaire);
+    if (!validation.ok) return alert(validation.message);
+    const payload = collectAnswers(questionnaire);
+    const evaluation = evaluateQuestionnaire(questionnaire, payload);
+    state.lastResult = {
+      id: createLocalId(),
+      questionnaireId: questionnaire.id,
+      questionnaireTitle: questionnaire.title,
+      shortTitle: questionnaire.shortTitle || questionnaire.title,
+      createdAt: new Date().toISOString(),
+      meta: payload.meta,
+      respondent: payload.respondent,
+      respondentDisplay: (questionnaire.respondentFields || []).map((field) => ({ label: field.label, value: optionLabel(field.options || [], payload.respondent[field.id]) || "미응답" })),
+      answers: payload.responses,
+      breakdown: buildBreakdown(questionnaire, payload.responses),
+      progress: buildProgressSnapshot(questionnaire, payload),
+      evaluation
+    };
+    renderResult(state.lastResult);
+    setStatusMessage("결과 계산을 완료했습니다. 필요하면 바로 구글 시트에 저장할 수 있습니다.", "success");
+  }
+
+  function buildBreakdown(questionnaire, responses) {
+    return (questionnaire.questions || []).map((question) => {
+      const answer = responses[question.id];
+      return {
+        id: question.id,
+        number: question.number,
+        text: question.text,
+        answerLabel: optionLabel(question.options || [], answer?.value) || "미응답",
+        score: answer?.score ?? null,
+        subAnswers: (question.subQuestions || []).map((subQuestion) => {
+          const subAnswer = responses[subQuestion.id];
+          if (!subAnswer) return null;
+          return { number: subQuestion.number, text: subQuestion.label || subQuestion.text || "", answerLabel: optionLabel(subQuestion.options || [], subAnswer.value) || "미응답", score: subAnswer.score };
+        }).filter(Boolean)
+      };
+    });
+  }
+
+  function evaluateQuestionnaire(questionnaire, payload) {
+    if (questionnaire.scoring?.type === "k_mdq") return evaluateKmDQ(questionnaire, payload);
+    if (questionnaire.scoring?.type === "endorsement_with_distress") return evaluateEndorsement(questionnaire, payload);
+    return evaluateSum(questionnaire, payload);
+  }
+
+  function evaluateSum(questionnaire, payload) {
+    const total = (questionnaire.questions || []).reduce((sum, question) => sum + (payload.responses[question.id]?.score || 0), 0);
+    const band = (questionnaire.scoring?.bands || []).find((item) => total >= item.min && total <= item.max) || null;
+    const flags = [];
+    if (questionnaire.scoring?.suicideFlagQuestionId && (payload.responses[questionnaire.scoring.suicideFlagQuestionId]?.score || 0) > 0) {
+      flags.push({ level: "warn", text: "자해·자살사고 관련 문항에 응답이 있어 즉시 추가 확인이 필요합니다." });
+    }
+    return { title: `${questionnaire.shortTitle || questionnaire.title} 결과`, scoreText: `${total}점`, bandText: band ? band.label : "참고 구간 없음", highlights: [`총점 ${total}점`, ...(band?.description ? [band.description] : []), ...(questionnaire.scoring?.highlights || [])], flags, notes: questionnaire.scoring?.notes || [] };
+  }
+
+  function evaluateEndorsement(questionnaire, payload) {
+    const yesCount = (questionnaire.questions || []).reduce((count, question) => count + ((payload.responses[question.id]?.score || 0) > 0 ? 1 : 0), 0);
+    const distressTotal = (questionnaire.questions || []).reduce((sum, question) => sum + (question.subQuestions || []).reduce((subSum, subQuestion) => subSum + (payload.responses[subQuestion.id]?.score || 0), 0), 0);
+    return { title: `${questionnaire.shortTitle || questionnaire.title} 결과`, scoreText: `예 ${yesCount}개 / 힘듦 ${distressTotal}점`, bandText: questionnaire.scoring?.summaryLabel || "참고용 요약", highlights: [`예 응답 수 ${yesCount}개`, `힘듦 보조합계 ${distressTotal}점`], flags: questionnaire.scoring?.referenceWarning ? [{ level: "info", text: questionnaire.scoring.referenceWarning }] : [], notes: questionnaire.scoring?.notes || [] };
+  }
+
+  function evaluateKmDQ(questionnaire, payload) {
+    const symptomYesCount = (questionnaire.scoring?.symptomQuestionIds || []).reduce((count, id) => count + ((payload.responses[id]?.score || 0) > 0 ? 1 : 0), 0);
+    const samePeriodScore = payload.responses[questionnaire.scoring.samePeriodQuestionId]?.score || 0;
+    const impairmentScore = payload.responses[questionnaire.scoring.impairmentQuestionId]?.score || 0;
+    const positive = symptomYesCount >= (questionnaire.scoring.positiveRule?.symptomYesAtLeast || 7) && samePeriodScore >= (questionnaire.scoring.positiveRule?.samePeriodAtLeast || 1) && impairmentScore >= (questionnaire.scoring.positiveRule?.impairmentAtLeast || 1);
+    return { title: `${questionnaire.shortTitle || questionnaire.title} 결과`, scoreText: `예 ${symptomYesCount}개`, bandText: positive ? "양성 참고 기준 충족" : "양성 참고 기준 미충족", highlights: [`증상 문항 예 응답 ${symptomYesCount}개`, `같은 시기 발생 여부 ${samePeriodScore > 0 ? "예" : "아니오"}`], flags: positive ? [{ level: "warn", text: "K-MDQ 참고 양성 기준에 해당해 추가 평가를 권합니다." }] : [], notes: questionnaire.scoring?.notes || [] };
+  }
+
+  function renderResult(record) {
+    ui.resultEmpty.classList.add("hidden");
+    ui.resultPanel.classList.remove("hidden");
+    ui.resultStateChip.textContent = "계산 완료";
+    ui.saveResultBtn.disabled = false;
+    ui.printResultBtn.disabled = false;
+    ui.printOrgLine.textContent = [state.settings.organizationName, state.settings.teamName].filter(Boolean).join(" · ") || "정신건강 척도검사 결과지";
+    ui.printScaleLine.textContent = `${record.questionnaireTitle} 결과지`;
+    ui.printMetaLine.textContent = [record.meta?.sessionDate ? `검사일 ${record.meta.sessionDate}` : "", record.meta?.workerName ? `담당자 ${record.meta.workerName}` : "", record.meta?.clientLabel ? `대상자 ${record.meta.clientLabel}` : "", record.meta?.birthDate ? `생년월일 ${record.meta.birthDate}` : "", record.meta?.sessionNote ? `비고 ${record.meta.sessionNote}` : ""].filter(Boolean).join(" / ");
+    ui.resultTitle.textContent = record.evaluation.title;
+    ui.resultScore.textContent = record.evaluation.scoreText;
+    ui.resultBand.textContent = record.evaluation.bandText;
+    ui.resultHighlights.innerHTML = (record.evaluation.highlights || []).map((text) => `<li>${escapeHtml(text)}</li>`).join("");
+    ui.resultFlags.innerHTML = (record.evaluation.flags || []).map((flag) => `<div class="flag-item ${escapeHtml(flag.level || "info")}">${escapeHtml(flag.text)}</div>`).join("");
+    ui.resultMeta.innerHTML = [
+      ["척도", record.questionnaireTitle], ["검사일", record.meta?.sessionDate], ["응답 진행률", `${record.progress.percent}% (${record.progress.answered}/${record.progress.total}항목)`], ["저장시각", formatDateTime(record.createdAt)], ["담당자", record.meta?.workerName], ["대상자", record.meta?.clientLabel], ["생년월일", record.meta?.birthDate], ...((record.respondentDisplay || []).map((item) => [item.label, item.value])), ["비고", record.meta?.sessionNote]
+    ].filter((item) => item[1]).map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("");
+    ui.resultBreakdown.innerHTML = (record.breakdown || []).map((item) => `<article class="breakdown-item"><div class="breakdown-head"><p class="breakdown-title">${escapeHtml(item.number)} ${escapeHtml(item.text)}</p><p class="breakdown-score">${item.score === null ? "-" : `${escapeHtml(String(item.score))}점`}</p></div><p class="breakdown-answer">${escapeHtml(item.answerLabel)}</p>${item.subAnswers && item.subAnswers.length ? `<div class="breakdown-sublist">${item.subAnswers.map((subItem) => `<div class="breakdown-subitem"><p><strong>${escapeHtml(subItem.number)}</strong> ${escapeHtml(subItem.text)}</p><p>${escapeHtml(subItem.answerLabel)} · ${escapeHtml(String(subItem.score))}점</p></div>`).join("")}</div>` : ""}</article>`).join("");
+    ui.resultNotes.innerHTML = (record.evaluation.notes || []).map((text) => `<li>${escapeHtml(text)}</li>`).join("");
+  }
+
+  function clearResult() {
+    state.lastResult = null;
+    ui.resultEmpty.classList.remove("hidden");
+    ui.resultPanel.classList.add("hidden");
+    ui.resultStateChip.textContent = "미계산";
+    ui.saveResultBtn.disabled = true;
+    ui.printResultBtn.disabled = true;
+    ui.resultHighlights.innerHTML = "";
+    ui.resultFlags.innerHTML = "";
+    ui.resultMeta.innerHTML = "";
+    ui.resultBreakdown.innerHTML = "";
+    ui.resultNotes.innerHTML = "";
+  }
+
+  function renderRecentRecords() {
+    ui.recordsTableBody.innerHTML = "";
+    ui.recordsEmpty.classList.toggle("hidden", state.recentRecords.length > 0);
+    state.recentRecords.forEach((record) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${escapeHtml(formatDateTime(record.createdAt))}</td><td>${escapeHtml(record.questionnaireTitle || "")}</td><td>${escapeHtml(record.evaluation?.scoreText || "")}</td><td>${escapeHtml(record.evaluation?.bandText || "")}</td><td>${escapeHtml(record.meta?.workerName || "")}</td><td>${escapeHtml(record.meta?.clientLabel || "")}</td><td>-</td>`;
+      ui.recordsTableBody.appendChild(row);
+    });
+  }
+
+  function onResetForm() {
+    ui.screeningForm.reset();
+    ui.screeningForm.querySelectorAll(".choice-card").forEach((card) => card.classList.remove("is-selected"));
+    applyFormDefaults();
+    syncSubQuestionsVisibility();
+    updateProgress();
+    clearResult();
+    setStatusMessage("현재 검사 입력을 초기화했습니다.", "");
+  }
+
+  function onSaveResult() {
+    if (!state.lastResult) return alert("먼저 결과를 계산해주세요.");
+    ui.saveResultBtn.disabled = true;
+    setStatusMessage("구글 시트에 저장하는 중입니다.", "");
+    google.script.run.withSuccessHandler((response) => {
+      state.lastResult = clone(response.record);
+      applyStatusPayload(response.status);
+      renderResult(state.lastResult);
+      setStatusMessage("구글 시트 저장을 완료했습니다.", "success");
+    }).withFailureHandler((error) => {
+      ui.saveResultBtn.disabled = false;
+      handleFailure(error);
+    }).saveScaleRecord(clone(state.lastResult));
+  }
+
+  function onRefreshApp() {
+    setStatusMessage("앱 상태를 다시 불러오는 중입니다.", "");
+    google.script.run.withSuccessHandler((response) => {
+      applyStatusPayload(response);
+      setStatusMessage("앱 상태를 새로고침했습니다.", "success");
+    }).withFailureHandler(handleFailure).getScaleWebappBootstrap();
+  }
+
+  function onRefreshRecords() {
+    setStatusMessage("최근 저장 결과를 다시 불러오는 중입니다.", "");
+    google.script.run.withSuccessHandler((response) => {
+      state.recentRecords = Array.isArray(response.records) ? clone(response.records) : [];
+      renderRecentRecords();
+      setStatusMessage("최근 저장 결과를 새로고침했습니다.", "success");
+    }).withFailureHandler(handleFailure).listRecentScaleRecords(20);
+  }
+
+  function createLocalId() {
+    return window.crypto && typeof window.crypto.randomUUID === "function" ? window.crypto.randomUUID() : `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  }
+
+  function formatDateTime(iso) {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return iso || "";
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+  }
+
+  function todayForInput() {
+    const date = new Date();
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  }
+
+  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function optionLabel(options, value) { const found = (options || []).find((option) => String(option.value) === String(value)); return found ? found.label : ""; }
+  function escapeHtml(value) { return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&#39;"); }
+  function cssEscape(value) { return String(value).replace(/(["\\.#:[\]])/g, "\\$1"); }
+})();

@@ -1,0 +1,16 @@
+{
+  "name": "mh-team-performance-apps-script",
+  "private": true,
+  "scripts": {
+    "login": "clasp login",
+    "login:no-localhost": "clasp login --no-localhost",
+    "status": "clasp status",
+    "push": "clasp push",
+    "pull": "clasp pull",
+    "open": "clasp open",
+    "watch": "clasp push --watch"
+  },
+  "devDependencies": {
+    "@google/clasp": "latest"
+  }
+}

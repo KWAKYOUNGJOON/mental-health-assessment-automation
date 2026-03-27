@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>MindMap 다시서기 | 가입 신청</title>
+    <style>
+      :root {
+        --bg: #f3f7f3;
+        --panel: rgba(255,255,255,.96);
+        --ink: #153228;
+        --subtle: #5f746a;
+        --line: rgba(19, 50, 40, 0.12);
+        --brand: #1b6b4f;
+        --accent: #ffc000;
+        --shadow: 0 18px 40px rgba(18, 52, 40, 0.12);
+        --radius: 22px;
+      }
+      * { box-sizing: border-box; }
+      html, body { min-height: 100%; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255, 192, 0, 0.12), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(27, 107, 79, 0.08), transparent 24%),
+          var(--bg);
+        color: var(--ink);
+        display: flex;
+        justify-content: center;
+        padding: 24px;
+      }
+      .signup-shell {
+        width: min(460px, 100%);
+        display: grid;
+        align-items: center;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: calc(var(--radius) + 6px);
+        box-shadow: var(--shadow);
+      }
+      .card {
+        padding: 28px;
+      }
+      .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .card-head h2 { margin: 0; font-size: 1.25rem; }
+      .ghost-btn, .primary-btn {
+        border: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      }
+      .ghost-btn { padding: 10px 14px; background: #edf3ef; color: var(--ink); }
+      .primary-btn {
+        padding: 12px 18px;
+        background: linear-gradient(135deg, var(--brand), #2a8967);
+        color: #fff;
+        box-shadow: 0 10px 24px rgba(27, 107, 79, 0.18);
+        min-width: 160px;
+      }
+      .ghost-btn:hover, .primary-btn:hover { transform: translateY(-1px); }
+      .form { display: grid; gap: 14px; margin-top: 12px; }
+      .field { display: grid; gap: 8px; }
+      .field span { font-weight: 700; color: var(--subtle); }
+      .field input, .field textarea {
+        width: 100%;
+        border: 1px solid rgba(21, 50, 40, 0.14);
+        border-radius: 14px;
+        padding: 12px 14px;
+        background: #fbfdfb;
+        color: var(--ink);
+        font: inherit;
+      }
+      .field input[readonly] {
+        background: #f3f6f4;
+        color: var(--ink);
+        font-weight: 700;
+      }
+      .field-wide { grid-column: 1 / -1; }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+      .status-inline { margin: 0; color: var(--subtle); line-height: 1.6; }
+      .status-inline.success { color: var(--brand); }
+      .status-inline.error { color: #c94b49; }
+      .footnote { margin: 16px 0 0; color: var(--subtle); line-height: 1.7; }
+      @media (max-width: 720px) {
+        body { padding: 16px; }
+        .card { padding: 16px; }
+        .card-head, .form-grid { grid-template-columns: 1fr; display: grid; }
+        .card-head { align-items: stretch; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="signup-shell">
+      <section class="panel card">
+        <div class="card-head">
+          <h2>가입 신청</h2>
+          <a id="backToLoginBtn" class="ghost-btn" href="#">로그인으로</a>
+        </div>
+        <p id="signupMessage" class="status-inline">가입신청 정보를 작성해주세요.</p>
+        <form id="signupForm" class="form">
+          <div class="form-grid">
+            <label class="field">
+              <span>이름</span>
+              <input type="text" id="signupDisplayName" autocomplete="name" placeholder="이름" />
+            </label>
+            <label class="field">
+              <span>희망 아이디</span>
+              <input type="text" id="signupUsername" autocomplete="username" placeholder="아이디" />
+            </label>
+            <label class="field">
+              <span>비밀번호</span>
+              <input type="password" id="signupPassword" autocomplete="new-password" placeholder="비밀번호" />
+            </label>
+            <label class="field">
+              <span>비밀번호 확인</span>
+              <input type="password" id="signupPasswordConfirm" autocomplete="new-password" placeholder="비밀번호 확인" />
+            </label>
+            <label class="field">
+              <span>소속</span>
+              <input type="text" id="signupAffiliation" value="다시서기" readonly />
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit" id="signupBtn" class="primary-btn">가입신청</button>
+          </div>
+        </form>
+        <p class="footnote">가입신청이 접수되면 관리자가 승인한 뒤 로그인할 수 있습니다.</p>
+      </section>
+    </main>
+
+    <script>
+      window.__BOOTSTRAP__ = <?!= bootstrapJson ?>;
+    </script>
+    <script>
+      (() => {
+        "use strict";
+
+        const SESSION_USERNAME_KEY = "mindmap_apps_script_session_username_v1";
+        const state = { publicBootstrap: window.__BOOTSTRAP__ || {} };
+        const ui = {};
+
+        document.addEventListener("DOMContentLoaded", init);
+
+        function init() {
+          [
+            "backToLoginBtn",
+            "signupForm", "signupDisplayName", "signupUsername", "signupPassword", "signupPasswordConfirm",
+            "signupAffiliation", "signupMessage", "signupBtn"
+          ].forEach((id) => { ui[id] = document.getElementById(id); });
+
+          ui.backToLoginBtn.addEventListener("click", goToLoginPage);
+          ui.signupForm.addEventListener("submit", onSignupSubmit);
+          ui.signupDisplayName.addEventListener("input", persist("mindmap_signup_display_name_v1", ui.signupDisplayName));
+          ui.signupUsername.addEventListener("input", persist("mindmap_signup_username_v1", ui.signupUsername));
+
+          const bootstrap = state.publicBootstrap || {};
+          ui.signupMessage.textContent = bootstrap.signupHint || "가입신청 정보를 작성해주세요.";
+          ui.signupDisplayName.value = localStorage.getItem("mindmap_signup_display_name_v1") || "";
+          ui.signupUsername.value = localStorage.getItem("mindmap_signup_username_v1") || "";
+          ui.signupPassword.value = "";
+          ui.signupPasswordConfirm.value = "";
+          ui.signupAffiliation.value = "다시서기";
+          ui.backToLoginBtn.href = pageUrl("login");
+          document.title = "가입 신청";
+          if (bootstrap.signupEnabled === false) {
+            ui.signupBtn.disabled = true;
+            setSignupMessage(bootstrap.signupHint || "현재는 가입신청을 사용할 수 없습니다.", "error");
+          }
+        }
+
+        function persist(key, input) {
+          return () => {
+            const value = input.value.trim();
+            if (value) localStorage.setItem(key, value);
+            else localStorage.removeItem(key);
+          };
+        }
+
+        function getNavigationBaseUrl() {
+          const bootstrap = window.__BOOTSTRAP__ || {};
+          const cachedBase = bootstrap.webAppUrl || bootstrap.loginUrl || "";
+          const currentUrl = window.location.href || "";
+          let topUrl = "";
+
+          try {
+            topUrl = window.top && window.top.location ? window.top.location.href || "" : "";
+          } catch (error) {
+            topUrl = "";
+          }
+
+          if (topUrl && topUrl.includes("/exec")) return topUrl;
+          if (currentUrl && currentUrl.includes("/exec")) return currentUrl;
+          return cachedBase || currentUrl;
+        }
+
+        function pageUrl(mode) {
+          const baseUrl = getNavigationBaseUrl();
+          const url = new URL(baseUrl);
+          if (mode === "signup") url.searchParams.set("page", "signup");
+          else {
+            url.searchParams.delete("page");
+            url.searchParams.delete("view");
+          }
+          url.searchParams.set("cb", Date.now().toString(36));
+          url.searchParams.delete("format");
+          url.searchParams.delete("sessionToken");
+          url.searchParams.delete("token");
+          return url.toString();
+        }
+
+        function navigateTop(url) {
+          if (window.top && window.top !== window) {
+            window.top.location.href = url;
+            return;
+          }
+          window.location.href = url;
+        }
+
+        function goToLoginPage(event) {
+          if (event) event.preventDefault();
+          navigateTop(pageUrl("login"));
+        }
+
+        function setSignupMessage(message, type) {
+          ui.signupMessage.textContent = message;
+          ui.signupMessage.className = `status-inline${type ? ` ${type}` : ""}`;
+        }
+
+        function onSignupSubmit(event) {
+          event.preventDefault();
+          const payload = {
+            displayName: ui.signupDisplayName.value.trim(),
+            username: ui.signupUsername.value.trim(),
+            password: ui.signupPassword.value,
+            passwordConfirm: ui.signupPasswordConfirm.value,
+            contact: "",
+            affiliation: "다시서기",
+            reason: "",
+            note: ""
+          };
+
+          if (!payload.displayName || !payload.username) {
+            setSignupMessage("이름과 희망 아이디를 모두 입력해주세요.", "error");
+            return;
+          }
+
+          if (!payload.password) {
+            setSignupMessage("비밀번호를 입력해주세요.", "error");
+            return;
+          }
+
+          if (!payload.passwordConfirm) {
+            setSignupMessage("비밀번호 확인을 입력해주세요.", "error");
+            return;
+          }
+
+          if (payload.password !== payload.passwordConfirm) {
+            setSignupMessage("비밀번호와 비밀번호 확인이 일치하지 않습니다.", "error");
+            return;
+          }
+
+          ui.signupBtn.disabled = true;
+          setSignupMessage("가입신청을 접수하는 중입니다.", "");
+          google.script.run.withSuccessHandler((response) => {
+            ui.signupBtn.disabled = false;
+            if (!response?.ok) {
+              setSignupMessage(response?.message || "가입신청에 실패했습니다.", "error");
+              return;
+            }
+            localStorage.setItem("mindmap_signup_display_name_v1", payload.displayName);
+            localStorage.setItem("mindmap_signup_username_v1", payload.username);
+            localStorage.setItem(SESSION_USERNAME_KEY, payload.username);
+            ui.signupPassword.value = "";
+            ui.signupPasswordConfirm.value = "";
+            setSignupMessage(response?.message || "가입신청이 접수되었습니다. 로그인 화면으로 이동합니다.", "success");
+            window.setTimeout(() => { navigateTop(pageUrl("login")); }, 1200);
+          }).withFailureHandler((error) => {
+            ui.signupBtn.disabled = false;
+            setSignupMessage(error?.message || "가입신청에 실패했습니다.", "error");
+          }).submitScaleSignupRequest(payload);
+        }
+      })();
+    </script>
+  </body>
+</html>

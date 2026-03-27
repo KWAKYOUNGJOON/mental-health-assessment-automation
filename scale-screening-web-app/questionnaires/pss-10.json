@@ -1,0 +1,427 @@
+{
+  "id": "pss-10",
+  "selfSeq": 5,
+  "title": "스트레스(PSS)",
+  "shortTitle": "PSS",
+  "recommendedAge": "청소년 이상",
+  "intro": [],
+  "questionPrompt": "다음의 문항들은 최근 1개월 동안 당신이 느끼고 생각한 것에 대한 것입니다.\n   각 문항의 내용을 얼마나 자주 느꼈는지 선택해 주십시오.",
+  "source": {
+    "referencePage": "",
+    "institution": "",
+    "citation": "이종하, 신철민, 고영훈, 임재형, 조숙행, 김승현, 정인과, 한창수(2012). 한글판 스트레스 자각척도의 신뢰도와 타당도 연구. 정신신체의학,20(2),127-134"
+  },
+  "respondentFields": [
+    {
+      "id": "gender",
+      "label": "성별",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "male",
+          "label": "남"
+        },
+        {
+          "value": "female",
+          "label": "여"
+        }
+      ]
+    },
+    {
+      "id": "age_group",
+      "label": "연령대",
+      "type": "single_choice",
+      "required": true,
+      "options": [
+        {
+          "value": "10s",
+          "label": "10대"
+        },
+        {
+          "value": "20s",
+          "label": "20대"
+        },
+        {
+          "value": "30s",
+          "label": "30대"
+        },
+        {
+          "value": "40s",
+          "label": "40대"
+        },
+        {
+          "value": "50s",
+          "label": "50대"
+        },
+        {
+          "value": "60s",
+          "label": "60대"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "number": "1.",
+      "text": "최근 1개월 동안, 예상치 못했던 일 때문에 당황했던 적이 얼마나 있었습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "number": "2.",
+      "text": "최근 1개월 동안, 인생에서 중요한 일들을 조절할 수 없다는 느낌을 얼마나 경험하였습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "number": "3.",
+      "text": "최근 1개월 동안, 신경이 예민해지고 스트레스를 받고 있다는 느낌을 얼마나 경험하였습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "number": "4.",
+      "text": "최근 1개월 동안, 당신의 개인적 문제들을 다루는데 있어서 얼마나 자주 자신감을 느끼셨습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 4
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 3
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 1
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "number": "5.",
+      "text": "최근 1개월 동안, 일상의 일들이 당신의 생각대로 진행되고 있다는 느낌을 얼마나 경험하였습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 4
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 3
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 1
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "number": "6.",
+      "text": "최근 1개월 동안, 당신이 꼭 해야 하는 일을 처리할 수 없다고 생각한 적이 얼마나 있었습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q7",
+      "number": "7.",
+      "text": "최근 1개월 동안, 일상생활의 짜증을 얼마나 자주 잘 다스릴 수 있었습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 4
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 3
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 1
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "id": "q8",
+      "number": "8.",
+      "text": "최근 1개월 동안, 최상의 컨디션이라고 얼마나 자주 느끼셨습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 4
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 3
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 1
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "id": "q9",
+      "number": "9.",
+      "text": "최근 1개월 동안, 당신이 통제할 수 없는 일 때문에 화가 난 경험이 얼마나 있었습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "number": "10.",
+      "text": "최근 1개월 동안, 어려운 일들이 너무 많이 쌓여서 극복하지 못할 것 같은 느낌을 얼마나 자주 경험하셨습니까?",
+      "required": true,
+      "options": [
+        {
+          "value": "option_1",
+          "label": "전혀없음",
+          "score": 0
+        },
+        {
+          "value": "option_2",
+          "label": "거의없음",
+          "score": 1
+        },
+        {
+          "value": "option_3",
+          "label": "때때로 있음",
+          "score": 2
+        },
+        {
+          "value": "option_4",
+          "label": "자주있음",
+          "score": 3
+        },
+        {
+          "value": "option_5",
+          "label": "매우 자주있음",
+          "score": 4
+        }
+      ]
+    }
+  ],
+  "scoring": {
+    "type": "sum",
+    "bands": [
+      {
+        "min": 0,
+        "max": 13,
+        "label": "낮음",
+        "description": "지각된 스트레스 수준이 낮은 편입니다."
+      },
+      {
+        "min": 14,
+        "max": 26,
+        "label": "중간",
+        "description": "중간 수준의 스트레스가 시사됩니다."
+      },
+      {
+        "min": 27,
+        "max": 40,
+        "label": "높음",
+        "description": "높은 스트레스 수준이 시사됩니다."
+      }
+    ],
+    "notes": [
+      "원본 selfCare 페이지는 긍정 문항 역채점을 이미 count 값에 반영하고 있어 그대로 합산합니다.",
+      "PSS는 참고용 스트레스 지표이며 단독 진단 도구는 아닙니다."
+    ]
+  },
+  "extractionNotes": [
+    "공개된 참고 페이지 HTML을 바탕으로 구조화했습니다.",
+    "공통 헤더, 푸터, 만족도조사, CMS 내부 hidden input 값은 앱에서 제외했습니다."
+  ]
+}

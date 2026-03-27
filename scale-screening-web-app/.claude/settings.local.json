@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node --check \"H:\\\\공유 드라이브\\\\정신건강팀공유드라이브\\\\정신건강팀자동화프로젝트\\\\project-01-performance-automation\\\\scale-screening-web-app\\\\server.js\")",
+      "Bash(node --check \"H:\\\\공유 드라이브\\\\정신건강팀공유드라이브\\\\정신건강팀자동화프로젝트\\\\project-01-performance-automation\\\\scale-screening-web-app\\\\app.js\")",
+      "Bash(pkill -f \"node server.js\")",
+      "Bash(ls \"C:\\\\Users\\\\ryusi_h\\\\.claude\\\\projects\\\\H-----------------------------------project-01-performance-automation-scale-screening-web-app\\\\memory\"\" 2>/dev/null || echo \"empty \")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(powershell -Command \"Get-NetTCPConnection -LocalPort 8134 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess\")",
+      "Bash(powershell -Command \"Stop-Process -Id 3312 -Force -ErrorAction SilentlyContinue\")",
+      "Bash(clasp --version)",
+      "Bash(clasp push:*)",
+      "Bash(clasp deployments:*)",
+      "Bash(clasp deploy:*)"
+    ]
+  }
+}
