@@ -100,7 +100,6 @@
     ui.saveResultBtn = document.getElementById("saveResultBtn");
     ui.printBtn = document.getElementById("printBtn");
     ui.exportCurrentBtn = document.getElementById("exportCurrentBtn");
-    ui.googleSyncUrl = document.getElementById("googleSyncUrl");
     ui.googleSyncToken = document.getElementById("googleSyncToken");
     ui.googleSyncEnabled = document.getElementById("googleSyncEnabled");
     ui.openAuthorizeBtn = document.getElementById("openAuthorizeBtn");
@@ -134,7 +133,6 @@
     ui.workerName.addEventListener("input", () => {
       localStorage.setItem(STORAGE_KEYS.worker, ui.workerName.value.trim());
     });
-    ui.googleSyncUrl.addEventListener("input", onGoogleSyncSettingsInput);
     ui.googleSyncToken.addEventListener("input", onGoogleSyncSettingsInput);
     ui.googleSyncEnabled.addEventListener("change", onGoogleSyncSettingsInput);
     ui.openAuthorizeBtn.addEventListener("click", onOpenAuthorizePage);
@@ -193,7 +191,6 @@
 
   function loadSyncSettings() {
     state.syncSettings = loadStoredSyncSettings();
-    ui.googleSyncUrl.value = state.syncSettings.webAppUrl || "";
     ui.googleSyncToken.value = state.syncSettings.syncToken || "";
     ui.googleSyncEnabled.checked = Boolean(state.syncSettings.syncEnabled);
     syncSheetControls();
@@ -219,7 +216,7 @@
 
   function onGoogleSyncSettingsInput() {
     state.syncSettings = {
-      webAppUrl: normalizeGoogleSyncUrl(ui.googleSyncUrl.value),
+      webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
       syncToken: ui.googleSyncToken.value.trim(),
       syncEnabled: Boolean(ui.googleSyncEnabled.checked)
     };
@@ -295,8 +292,7 @@
   function onOpenAuthorizePage() {
     const url = buildAuthorizeUrl(state.syncSettings.webAppUrl || DEFAULT_GOOGLE_SYNC_URL);
     if (!url) {
-      setSyncStatus("구글 연동 주소가 올바르지 않아 권한 승인 페이지를 열 수 없습니다.", "error");
-      ui.googleSyncUrl.focus();
+      setSyncStatus("내부 구글 연동 설정이 올바르지 않아 권한 승인 페이지를 열 수 없습니다.", "error");
       return;
     }
     window.open(url, "_blank", "noopener");
@@ -328,16 +324,16 @@
     if (!settings?.webAppUrl) {
       return {
         ok: false,
-        message: "구글 연동 주소를 먼저 입력해주세요.",
-        focusTarget: ui.googleSyncUrl
+        message: "내부 구글 연동 주소가 설정되지 않았습니다. 코드의 기본 연동 주소를 확인해주세요.",
+        focusTarget: ui.googleSyncEnabled
       };
     }
 
     if (!isValidGoogleSyncUrlFormat(settings.webAppUrl)) {
       return {
         ok: false,
-        message: "구글 연동 주소 형식이 올바르지 않습니다. 배포된 Apps Script 웹앱 주소를 사용해주세요.",
-        focusTarget: ui.googleSyncUrl
+        message: "내부 구글 연동 주소 형식이 올바르지 않습니다. 코드의 기본 연동 주소를 확인해주세요.",
+        focusTarget: ui.googleSyncEnabled
       };
     }
 
@@ -2399,5 +2395,14 @@
       return window.CSS.escape(String(value));
     }
     return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+  }
+})();
+f (window.CSS?.escape) {
+      return window.CSS.escape(String(value));
+    }
+    return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
+  }
+})();
+zA-Z0-9_-]/g, "\\$&");
   }
 })();
