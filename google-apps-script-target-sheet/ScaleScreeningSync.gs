@@ -14,7 +14,7 @@ const SCALE_SCREENING_SYNC_CONFIG = {
     workspaceVersion: "scale_screening_workspace_version"
   },
   defaults: {
-    targetSpreadsheetId: "11y5p7Cp_yN2vggMOlCwn4pKNBEmio-CmkK25Nyd2nIk",
+    targetSpreadsheetId: "",
     recordSheetName: "척도검사기록",
     answerSheetName: "척도문항응답",
     questionnaireSheetName: "척도마스터",
@@ -1701,7 +1701,9 @@ function getScaleScreeningTargetSpreadsheet_() {
     }
   }
 
-  throw new Error("대상 스프레드시트를 확인할 수 없습니다.");
+  throw new Error(
+    "대상 스프레드시트를 확인할 수 없습니다. 대상 스프레드시트에서 '척도검사 DB 시트 지정' 메뉴를 먼저 실행해주세요."
+  );
 }
 
 function getScaleScreeningSheetIfExists_(sheetName) {

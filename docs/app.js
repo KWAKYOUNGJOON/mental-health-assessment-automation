@@ -3,10 +3,7 @@
 
   const ORG_NAME = "다시서기종합지원센터";
   const TEAM_NAME = "정신건강팀";
-  const GOOGLE_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/11y5p7Cp_yN2vggMOlCwn4pKNBEmio-CmkK25Nyd2nIk/edit?gid=0#gid=0";
-  const DEFAULT_GOOGLE_SYNC_URL =
-    "https://script.google.com/macros/s/AKfycbywbENzL--pd_pLcmJPzWvAKOhzM7SwAkL38Zd7aNldafguQO85N_U2k0v5baUxhr4E/exec";
+  const DEFAULT_GOOGLE_SYNC_URL = "";
   const STORAGE_KEYS = {
     records: "mindmap_scale_records_v1",
     worker: "mindmap_scale_worker_v1",
@@ -38,7 +35,8 @@
     syncSettings: {
       webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
       syncToken: "",
-      syncEnabled: false
+      syncEnabled: false,
+      targetSpreadsheetId: ""
     }
   };
 
@@ -100,6 +98,7 @@
     ui.saveResultBtn = document.getElementById("saveResultBtn");
     ui.printBtn = document.getElementById("printBtn");
     ui.exportCurrentBtn = document.getElementById("exportCurrentBtn");
+    ui.googleSyncWebAppUrl = document.getElementById("googleSyncWebAppUrl");
     ui.googleSyncToken = document.getElementById("googleSyncToken");
     ui.googleSyncEnabled = document.getElementById("googleSyncEnabled");
     ui.openAuthorizeBtn = document.getElementById("openAuthorizeBtn");
@@ -133,10 +132,11 @@
     ui.workerName.addEventListener("input", () => {
       localStorage.setItem(STORAGE_KEYS.worker, ui.workerName.value.trim());
     });
+    ui.googleSyncWebAppUrl.addEventListener("input", onGoogleSyncSettingsInput);
     ui.googleSyncToken.addEventListener("input", onGoogleSyncSettingsInput);
     ui.googleSyncEnabled.addEventListener("change", onGoogleSyncSettingsInput);
     ui.openAuthorizeBtn.addEventListener("click", onOpenAuthorizePage);
-    ui.openSheetBtn.addEventListener("click", () => window.open(GOOGLE_SHEET_URL, "_blank", "noopener"));
+    ui.openSheetBtn.addEventListener("click", onOpenSheetPage);
     ui.syncCurrentBtn.addEventListener("click", onSyncCurrentResult);
     ui.syncQuestionnairesBtn.addEventListener("click", onSyncQuestionnaires);
     ui.checkSyncStatusBtn.addEventListener("click", onCheckSyncStatus);
@@ -191,6 +191,9 @@
 
   function loadSyncSettings() {
     state.syncSettings = loadStoredSyncSettings();
+    if (ui.googleSyncWebAppUrl) {
+      ui.googleSyncWebAppUrl.value = state.syncSettings.webAppUrl || "";
+    }
     if (ui.googleSyncToken) {
       ui.googleSyncToken.value = state.syncSettings.syncToken || "";
     }
@@ -204,34 +207,42 @@
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.googleSync) || "{}");
       return {
-        webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
+        webAppUrl: typeof parsed.webAppUrl === "string" ? parsed.webAppUrl.trim() : DEFAULT_GOOGLE_SYNC_URL,
         syncToken: typeof parsed.syncToken === "string" ? parsed.syncToken : "",
-        syncEnabled: Boolean(parsed.syncEnabled)
+        syncEnabled: Boolean(parsed.syncEnabled),
+        targetSpreadsheetId: typeof parsed.targetSpreadsheetId === "string" ? parsed.targetSpreadsheetId.trim() : ""
       };
     } catch (error) {
       console.warn("구글 시트 연동 설정을 읽지 못했습니다.", error);
       return {
         webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
         syncToken: "",
-        syncEnabled: false
+        syncEnabled: false,
+        targetSpreadsheetId: ""
       };
     }
   }
 
   function onGoogleSyncSettingsInput() {
+    const webAppUrl = ui.googleSyncWebAppUrl.value.trim();
+    const nextNormalizedWebAppUrl = normalizeGoogleSyncUrl(webAppUrl);
+    const previousNormalizedWebAppUrl = normalizeGoogleSyncUrl(state.syncSettings.webAppUrl || "");
     state.syncSettings = {
-      webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
+      webAppUrl,
       syncToken: ui.googleSyncToken.value.trim(),
-      syncEnabled: Boolean(ui.googleSyncEnabled.checked)
+      syncEnabled: Boolean(ui.googleSyncEnabled.checked),
+      targetSpreadsheetId:
+        nextNormalizedWebAppUrl &&
+        previousNormalizedWebAppUrl &&
+        nextNormalizedWebAppUrl === previousNormalizedWebAppUrl
+          ? state.syncSettings.targetSpreadsheetId || ""
+          : ""
     };
-    localStorage.setItem(STORAGE_KEYS.googleSync, JSON.stringify({
-      syncToken: state.syncSettings.syncToken,
-      syncEnabled: state.syncSettings.syncEnabled
-    }));
+    persistSyncSettings();
     syncSheetControls();
 
     if (!state.syncSettings.webAppUrl || !isValidGoogleSyncUrlFormat(state.syncSettings.webAppUrl)) {
-      setSyncStatus("내부 구글 연동 주소가 올바르지 않습니다. 배포 설정을 확인해주세요.", "error");
+      setSyncStatus("구글 연동 웹앱 URL이 올바르지 않습니다. 새 배포에서 받은 exec 주소를 입력해주세요.", "error");
       return;
     }
 
@@ -245,7 +256,37 @@
       return;
     }
 
-    setSyncStatus("연동 설정을 저장했습니다. 승인 후 시트 저장과 조회를 사용할 수 있습니다.");
+    setSyncStatus("연동 설정을 저장했습니다. 승인 페이지를 먼저 열고 연동 상태를 확인해주세요.");
+  }
+
+  function persistSyncSettings() {
+    localStorage.setItem(STORAGE_KEYS.googleSync, JSON.stringify({
+      webAppUrl: state.syncSettings.webAppUrl,
+      syncToken: state.syncSettings.syncToken,
+      syncEnabled: state.syncSettings.syncEnabled,
+      targetSpreadsheetId: state.syncSettings.targetSpreadsheetId || ""
+    }));
+  }
+
+  function rememberTargetSpreadsheetId(spreadsheetId) {
+    const normalized = typeof spreadsheetId === "string" ? spreadsheetId.trim() : "";
+    if (!normalized || normalized === state.syncSettings.targetSpreadsheetId) {
+      return;
+    }
+
+    state.syncSettings = {
+      ...state.syncSettings,
+      targetSpreadsheetId: normalized
+    };
+    persistSyncSettings();
+  }
+
+  function buildGoogleSheetUrl(spreadsheetId) {
+    const normalized = typeof spreadsheetId === "string" ? spreadsheetId.trim() : "";
+    if (!normalized) {
+      return "";
+    }
+    return `https://docs.google.com/spreadsheets/d/${encodeURIComponent(normalized)}/edit`;
   }
 
   function normalizeGoogleSyncUrl(value) {
@@ -282,6 +323,7 @@
 
   function syncSheetControls() {
     const enabled = Boolean(state.syncSettings.syncEnabled);
+    const hasValidWebAppUrl = isValidGoogleSyncUrlFormat(normalizeGoogleSyncUrl(state.syncSettings.webAppUrl));
     [
       ui.saveResultBtn,
       ui.syncCurrentBtn,
@@ -299,13 +341,21 @@
       ui.googleSyncToken.disabled = false;
     }
     if (ui.openAuthorizeBtn) {
-      ui.openAuthorizeBtn.disabled = !DEFAULT_GOOGLE_SYNC_URL;
+      ui.openAuthorizeBtn.disabled = !hasValidWebAppUrl;
     }
     if (ui.openSheetBtn) {
-      ui.openSheetBtn.disabled = !GOOGLE_SHEET_URL;
+      ui.openSheetBtn.disabled = !hasValidWebAppUrl;
     }
     if (!enabled) {
       setSyncStatus("시트 기능 사용이 꺼져 있습니다. 일반 사용자는 검사와 기기 저장만 사용할 수 있습니다.");
+      return;
+    }
+    if (!state.syncSettings.webAppUrl) {
+      setSyncStatus("구글 연동 웹앱 URL을 입력한 뒤 권한 승인 페이지를 열어주세요.", "error");
+      return;
+    }
+    if (!hasValidWebAppUrl) {
+      setSyncStatus("구글 연동 웹앱 URL 형식을 확인해주세요.", "error");
       return;
     }
     if (!state.syncSettings.syncToken) {
@@ -316,12 +366,44 @@
   }
 
   function onOpenAuthorizePage() {
-    const url = buildAuthorizeUrl(state.syncSettings.webAppUrl || DEFAULT_GOOGLE_SYNC_URL);
+    const url = buildAuthorizeUrl(state.syncSettings.webAppUrl);
     if (!url) {
-      setSyncStatus("내부 구글 연동 설정이 올바르지 않아 권한 승인 페이지를 열 수 없습니다.", "error");
+      setSyncStatus("구글 연동 웹앱 URL이 올바르지 않아 권한 승인 페이지를 열 수 없습니다.", "error");
       return;
     }
     window.open(url, "_blank", "noopener");
+  }
+
+  async function onOpenSheetPage() {
+    const settings = { ...state.syncSettings };
+    const validation = validateGoogleSyncSettings(settings, { requireEnabled: false });
+    if (!validation.ok) {
+      setSyncStatus(validation.message, "error");
+      validation.focusTarget?.focus();
+      return;
+    }
+
+    const cachedSheetUrl = buildGoogleSheetUrl(settings.targetSpreadsheetId);
+    if (cachedSheetUrl) {
+      window.open(cachedSheetUrl, "_blank", "noopener");
+      return;
+    }
+
+    setSyncBusy(true, "대상 구글 시트를 확인하고 있습니다...");
+    try {
+      const response = await fetchGoogleSyncStatus(settings);
+      const sheetUrl = buildGoogleSheetUrl(response.spreadsheetId);
+      if (!sheetUrl) {
+        throw new Error("대상 구글 시트 ID를 확인하지 못했습니다.");
+      }
+      window.open(sheetUrl, "_blank", "noopener");
+      setSyncStatus("대상 구글 시트를 새 탭에서 열었습니다.", "success");
+    } catch (error) {
+      console.error("대상 구글 시트 열기 실패", error);
+      setSyncStatus(`대상 구글 시트 열기 실패: ${error.message}`, "error");
+    } finally {
+      setSyncBusy(false);
+    }
   }
 
   function buildAuthorizeUrl(webAppUrl) {
@@ -350,16 +432,16 @@
     if (!settings?.webAppUrl) {
       return {
         ok: false,
-        message: "내부 구글 연동 주소가 설정되지 않았습니다. 배포 설정을 확인해주세요.",
-        focusTarget: ui.googleSyncEnabled
+        message: "구글 연동 웹앱 URL을 입력해주세요. 새 배포에서 받은 exec 주소가 필요합니다.",
+        focusTarget: ui.googleSyncWebAppUrl
       };
     }
 
     if (!isValidGoogleSyncUrlFormat(settings.webAppUrl)) {
       return {
         ok: false,
-        message: "내부 구글 연동 주소 형식이 올바르지 않습니다. 배포 설정을 확인해주세요.",
-        focusTarget: ui.googleSyncEnabled
+        message: "구글 연동 웹앱 URL 형식이 올바르지 않습니다. https://script.google.com/.../exec 형식인지 확인해주세요.",
+        focusTarget: ui.googleSyncWebAppUrl
       };
     }
 
@@ -1402,14 +1484,7 @@
 
     setSyncBusy(true, "구글 시트 연동 상태를 확인하고 있습니다...");
     try {
-      const response = await requestGoogleSyncJsonp(settings.webAppUrl, {
-        action: "status",
-        token: settings.syncToken
-      });
-      if (!response?.ok) {
-        throw new Error(response?.error || "연동 상태를 확인하지 못했습니다.");
-      }
-
+      const response = await fetchGoogleSyncStatus(settings);
       const statusMessage = `${response.spreadsheetName || "시트"} · 기록 ${response.recordRowCount || 0}건 · 문항 ${response.answerRowCount || 0}건`;
       setSyncStatus(`연동 확인 완료: ${statusMessage}`, "success");
     } catch (error) {
@@ -1608,6 +1683,18 @@
       script.src = requestUrl;
       document.body.appendChild(script);
     });
+  }
+
+  async function fetchGoogleSyncStatus(settings) {
+    const response = await requestGoogleSyncJsonp(settings.webAppUrl, {
+      action: "status",
+      token: settings.syncToken
+    });
+    if (!response?.ok) {
+      throw new Error(response?.error || "연동 상태를 확인하지 못했습니다.");
+    }
+    rememberTargetSpreadsheetId(response.spreadsheetId);
+    return response;
   }
 
   function renderDashboard() {

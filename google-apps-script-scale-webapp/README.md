@@ -29,7 +29,7 @@
 
 ## 참고
 
-- 기본 대상 스프레드시트 ID는 `11y5p7Cp_yN2vggMOlCwn4pKNBEmio-CmkK25Nyd2nIk`입니다.
+- 기본 대상 스프레드시트 ID는 비워둡니다. 운영 시작 전에 현재 사용할 스프레드시트 ID를 Script Properties에 저장해야 합니다.
 - 웹앱 첫 실행 시 척도 마스터 시트와 저장 시트를 자동 점검합니다.
 - 현재 구현본은 Apps Script 프로젝트 `1RAhgFNBQylhMIJddrta9_rxttuHfvcsIfyccGP5_lYtaCSP9oh8xcJ0F`에 푸시되었습니다.
 - 앱 접근은 공개로 열어두고, 앱 내부 로그인으로 사용자를 제한합니다.

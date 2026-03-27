@@ -18,7 +18,7 @@ const SCALE_SYNC_CONFIG = {
     token: "scale_screening_sync_token"
   },
   defaults: {
-    spreadsheetId: "11y5p7Cp_yN2vggMOlCwn4pKNBEmio-CmkK25Nyd2nIk"
+    spreadsheetId: ""
   },
   legacySpreadsheetIds: [
     "129w-AhjiLg2fxGqssFeC4vcQJv9hG89M4SAxXXEKrCU"
@@ -2826,13 +2826,24 @@ function getTargetSpreadsheetId_() {
   const storedId = normalizeText_(PropertiesService.getScriptProperties().getProperty(
     SCALE_SYNC_CONFIG.propertyKeys.spreadsheetId
   ));
+  const defaultId = normalizeText_(SCALE_SYNC_CONFIG.defaults.spreadsheetId);
 
   if (!storedId) {
-    return SCALE_SYNC_CONFIG.defaults.spreadsheetId;
+    if (defaultId) {
+      return defaultId;
+    }
+    throw new Error(
+      "대상 스프레드시트 ID가 설정되지 않았습니다. 현재 사용할 스프레드시트 ID를 다시 저장해주세요."
+    );
   }
 
   if (SCALE_SYNC_CONFIG.legacySpreadsheetIds.indexOf(storedId) >= 0) {
-    return SCALE_SYNC_CONFIG.defaults.spreadsheetId;
+    if (defaultId) {
+      return defaultId;
+    }
+    throw new Error(
+      "저장된 대상 스프레드시트 ID가 예전 기본값으로 남아 있습니다. 현재 사용할 스프레드시트 ID를 다시 저장해주세요."
+    );
   }
 
   return storedId;
