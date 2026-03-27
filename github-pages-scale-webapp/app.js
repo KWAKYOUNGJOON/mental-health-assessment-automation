@@ -3,10 +3,10 @@
 
   const ORG_NAME = "다시서기종합지원센터";
   const TEAM_NAME = "정신건강팀";
-  const PUBLIC_SYNC_DISABLED_MESSAGE =
-    "보안상 공개 배포본에서는 구글 시트 직접 연동을 지원하지 않습니다. 내부 운영본에서만 사용하세요.";
-  const GOOGLE_SHEET_URL = "";
-  const DEFAULT_GOOGLE_SYNC_URL = "";
+  const GOOGLE_SHEET_URL =
+    "https://docs.google.com/spreadsheets/d/11y5p7Cp_yN2vggMOlCwn4pKNBEmio-CmkK25Nyd2nIk/edit?gid=0#gid=0";
+  const DEFAULT_GOOGLE_SYNC_URL =
+    "https://script.google.com/macros/s/AKfycbywbENzL--pd_pLcmJPzWvAKOhzM7SwAkL38Zd7aNldafguQO85N_U2k0v5baUxhr4E/exec";
   const STORAGE_KEYS = {
     records: "mindmap_scale_records_v1",
     worker: "mindmap_scale_worker_v1",
@@ -190,37 +190,62 @@
   }
 
   function loadSyncSettings() {
-    try {
-      localStorage.removeItem(STORAGE_KEYS.googleSync);
-    } catch (error) {
-      console.warn("기존 구글 시트 연동 설정을 지우지 못했습니다.", error);
-    }
     state.syncSettings = loadStoredSyncSettings();
     if (ui.googleSyncToken) {
-      ui.googleSyncToken.value = "";
+      ui.googleSyncToken.value = state.syncSettings.syncToken || "";
     }
     if (ui.googleSyncEnabled) {
-      ui.googleSyncEnabled.checked = false;
+      ui.googleSyncEnabled.checked = Boolean(state.syncSettings.syncEnabled);
     }
     syncSheetControls();
   }
 
   function loadStoredSyncSettings() {
-    return {
-      webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
-      syncToken: "",
-      syncEnabled: false
-    };
+    try {
+      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.googleSync) || "{}");
+      return {
+        webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
+        syncToken: typeof parsed.syncToken === "string" ? parsed.syncToken : "",
+        syncEnabled: Boolean(parsed.syncEnabled)
+      };
+    } catch (error) {
+      console.warn("구글 시트 연동 설정을 읽지 못했습니다.", error);
+      return {
+        webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
+        syncToken: "",
+        syncEnabled: false
+      };
+    }
   }
 
   function onGoogleSyncSettingsInput() {
     state.syncSettings = {
       webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
-      syncToken: "",
-      syncEnabled: false
+      syncToken: ui.googleSyncToken.value.trim(),
+      syncEnabled: Boolean(ui.googleSyncEnabled.checked)
     };
+    localStorage.setItem(STORAGE_KEYS.googleSync, JSON.stringify({
+      syncToken: state.syncSettings.syncToken,
+      syncEnabled: state.syncSettings.syncEnabled
+    }));
     syncSheetControls();
-    setSyncStatus(PUBLIC_SYNC_DISABLED_MESSAGE);
+
+    if (!state.syncSettings.webAppUrl || !isValidGoogleSyncUrlFormat(state.syncSettings.webAppUrl)) {
+      setSyncStatus("내부 구글 연동 주소가 올바르지 않습니다. 배포 설정을 확인해주세요.", "error");
+      return;
+    }
+
+    if (!state.syncSettings.syncEnabled) {
+      setSyncStatus("시트 기능 사용이 꺼져 있습니다. 일반 사용자는 검사와 기기 저장만 사용할 수 있습니다.");
+      return;
+    }
+
+    if (!state.syncSettings.syncToken) {
+      setSyncStatus("간편 모드가 켜져 있습니다. 토큰 없이 전송하지만 URL을 아는 사람은 쓸 수 있습니다.");
+      return;
+    }
+
+    setSyncStatus("연동 설정을 저장했습니다. 승인 후 시트 저장과 조회를 사용할 수 있습니다.");
   }
 
   function normalizeGoogleSyncUrl(value) {
@@ -256,27 +281,44 @@
   }
 
   function syncSheetControls() {
+    const enabled = Boolean(state.syncSettings.syncEnabled);
     [
       ui.saveResultBtn,
-      ui.googleSyncEnabled,
-      ui.googleSyncToken,
-      ui.openAuthorizeBtn,
-      ui.openSheetBtn,
       ui.syncCurrentBtn,
       ui.syncQuestionnairesBtn,
       ui.checkSyncStatusBtn
     ].forEach((button) => {
       if (button) {
-        button.disabled = true;
+        button.disabled = !enabled;
       }
     });
-    setSyncStatus(PUBLIC_SYNC_DISABLED_MESSAGE);
+    if (ui.googleSyncEnabled) {
+      ui.googleSyncEnabled.disabled = false;
+    }
+    if (ui.googleSyncToken) {
+      ui.googleSyncToken.disabled = false;
+    }
+    if (ui.openAuthorizeBtn) {
+      ui.openAuthorizeBtn.disabled = !DEFAULT_GOOGLE_SYNC_URL;
+    }
+    if (ui.openSheetBtn) {
+      ui.openSheetBtn.disabled = !GOOGLE_SHEET_URL;
+    }
+    if (!enabled) {
+      setSyncStatus("시트 기능 사용이 꺼져 있습니다. 일반 사용자는 검사와 기기 저장만 사용할 수 있습니다.");
+      return;
+    }
+    if (!state.syncSettings.syncToken) {
+      setSyncStatus("간편 모드가 켜져 있습니다. 토큰 없이 전송하지만 URL을 아는 사람은 쓸 수 있습니다.");
+      return;
+    }
+    setSyncStatus("연동 설정을 불러왔습니다. 승인 후 시트 저장과 조회를 사용할 수 있습니다.");
   }
 
   function onOpenAuthorizePage() {
     const url = buildAuthorizeUrl(state.syncSettings.webAppUrl || DEFAULT_GOOGLE_SYNC_URL);
     if (!url) {
-      setSyncStatus(PUBLIC_SYNC_DISABLED_MESSAGE, "error");
+      setSyncStatus("내부 구글 연동 설정이 올바르지 않아 권한 승인 페이지를 열 수 없습니다.", "error");
       return;
     }
     window.open(url, "_blank", "noopener");
@@ -297,11 +339,31 @@
   }
 
   function validateGoogleSyncSettings(settings, options = {}) {
-    return {
-      ok: false,
-      message: PUBLIC_SYNC_DISABLED_MESSAGE,
-      focusTarget: null
-    };
+    if (options.requireEnabled !== false && !settings?.syncEnabled) {
+      return {
+        ok: false,
+        message: "시트 기능 사용을 먼저 켜고, 권한 승인 페이지에서 Google 승인을 완료해주세요.",
+        focusTarget: ui.googleSyncEnabled
+      };
+    }
+
+    if (!settings?.webAppUrl) {
+      return {
+        ok: false,
+        message: "내부 구글 연동 주소가 설정되지 않았습니다. 배포 설정을 확인해주세요.",
+        focusTarget: ui.googleSyncEnabled
+      };
+    }
+
+    if (!isValidGoogleSyncUrlFormat(settings.webAppUrl)) {
+      return {
+        ok: false,
+        message: "내부 구글 연동 주소 형식이 올바르지 않습니다. 배포 설정을 확인해주세요.",
+        focusTarget: ui.googleSyncEnabled
+      };
+    }
+
+    return { ok: true };
   }
 
   function setSyncStatus(message, type = "") {
@@ -331,7 +393,7 @@
       ui.checkSyncStatusBtn
     ].forEach((button) => {
       if (button) {
-        button.disabled = true;
+        button.disabled = isBusy || !Boolean(state.syncSettings.syncEnabled);
       }
     });
 
@@ -2359,14 +2421,5 @@
       return window.CSS.escape(String(value));
     }
     return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
-  }
-})();
-f (window.CSS?.escape) {
-      return window.CSS.escape(String(value));
-    }
-    return String(value).replace(/[^a-zA-Z0-9_-]/g, "\\$&");
-  }
-})();
-zA-Z0-9_-]/g, "\\$&");
   }
 })();
