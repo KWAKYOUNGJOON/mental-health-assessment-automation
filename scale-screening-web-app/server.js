@@ -101,8 +101,9 @@ async function handleApiRequest(req, res, requestUrl) {
 
   if (req.method === "GET" && requestUrl.pathname === "/api/config") {
     const config = readConfig();
-    const { kioskPin: _pin, ...publicConfig } = config;
+    const { kioskPin: _pin, googleSyncWebAppUrl: _syncUrl, googleSyncToken: _syncToken, ...publicConfig } = config;
     publicConfig.kioskPinSet = Boolean(config.kioskPin && config.kioskPin.length >= 4);
+    publicConfig.googleSyncConfigured = getGoogleSyncConfig(config).configured;
     sendJson(res, 200, { ok: true, config: publicConfig });
     return;
   }
@@ -130,6 +131,28 @@ async function handleApiRequest(req, res, requestUrl) {
       ok: true,
       bootstrapRequired: users.length === 0,
       user: session ? sanitizeUser(session.user) : null
+    });
+    return;
+  }
+
+  if (req.method === "POST" && requestUrl.pathname === "/api/google-sync") {
+    requireAuth(getSessionUser(req, readUsers()));
+
+    const syncConfig = getGoogleSyncConfig();
+    if (!syncConfig.configured) {
+      sendJson(res, 503, {
+        ok: false,
+        error: "서버에 구글 시트 연동 주소가 설정되지 않았습니다."
+      });
+      return;
+    }
+
+    const body = await readRequestBody(req);
+    const payload = buildGoogleSyncProxyPayload(body, syncConfig.syncToken);
+    const result = await forwardGoogleSyncPayload(syncConfig.webAppUrl, payload);
+    sendJson(res, 200, {
+      ok: true,
+      result
     });
     return;
   }
@@ -853,7 +876,9 @@ function defaultConfig() {
     contactNote: "",
     enabledScales: [],
     primaryColor: "",
-    kioskPin: ""
+    kioskPin: "",
+    googleSyncWebAppUrl: "",
+    googleSyncToken: ""
   };
 }
 
@@ -863,6 +888,84 @@ function readConfig() {
 
 function writeConfig(config) {
   writeJsonFile(CONFIG_FILE, config);
+}
+
+function getGoogleSyncConfig(configOverride) {
+  const config = configOverride || readConfig();
+  const envUrl = normalizeGoogleSyncUrl(process.env.MH_GOOGLE_SYNC_URL || "");
+  const envToken = normalizeText(process.env.MH_GOOGLE_SYNC_TOKEN || "");
+  const fileUrl = normalizeGoogleSyncUrl(config.googleSyncWebAppUrl || "");
+  const fileToken = normalizeText(config.googleSyncToken || "");
+  const webAppUrl = envUrl || fileUrl;
+  return {
+    webAppUrl,
+    syncToken: envToken || fileToken,
+    configured: Boolean(webAppUrl)
+  };
+}
+
+function normalizeGoogleSyncUrl(value) {
+  const normalized = normalizeText(value);
+  if (!normalized) {
+    return "";
+  }
+  return isValidGoogleSyncUrlFormat(normalized) ? normalized : "";
+}
+
+function isValidGoogleSyncUrlFormat(url) {
+  return /^https:\/\/script\.google\.com\/(?:macros\/s\/[A-Za-z0-9_-]+(?:\/(?:exec|dev))?|a\/macros\/[^/]+\/s\/[A-Za-z0-9_-]+(?:\/(?:exec|dev))?)(?:[/?#].*)?$/i.test(url || "");
+}
+
+function buildGoogleSyncProxyPayload(body, syncToken) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    throw createHttpError(400, "전송할 구글 시트 데이터가 없습니다.");
+  }
+
+  const payload = JSON.parse(JSON.stringify(body));
+  if (!normalizeText(payload.syncScope)) {
+    throw createHttpError(400, "구글 시트 동기화 범위가 없습니다.");
+  }
+  if (!Array.isArray(payload.records) && !Array.isArray(payload.questionnaires)) {
+    throw createHttpError(400, "전송할 검사 기록 또는 척도 마스터가 없습니다.");
+  }
+
+  payload.token = syncToken;
+  return payload;
+}
+
+async function forwardGoogleSyncPayload(webAppUrl, payload) {
+  let response;
+  try {
+    response = await fetch(webAppUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8"
+      },
+      body: JSON.stringify(payload)
+    });
+  } catch (error) {
+    throw createHttpError(502, `구글 시트 연동 서버에 연결하지 못했습니다: ${error.message}`);
+  }
+
+  const text = await response.text();
+  let data = {};
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch (error) {
+      throw createHttpError(502, "구글 시트 연동 서버 응답을 해석하지 못했습니다.");
+    }
+  }
+
+  if (!response.ok) {
+    throw createHttpError(502, data.error || `구글 시트 연동 서버 응답 오류 (${response.status})`);
+  }
+
+  if (data && data.ok === false) {
+    throw createHttpError(502, data.error || "구글 시트 연동 서버가 요청을 처리하지 못했습니다.");
+  }
+
+  return data;
 }
 
 function readClients() {

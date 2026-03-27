@@ -500,36 +500,18 @@
                     <h3>구글 시트 연동</h3>
                   </div>
                 </div>
-                <label class="text-field">
-                  <span class="text-label">구글 연동 주소</span>
-                  <input
-                    id="googleSyncUrl"
-                    type="url"
-                    maxlength="300"
-                    placeholder="비워두면 기본 구글 연동 주소 사용"
-                    autocomplete="off"
-                  />
-                </label>
-                <label class="text-field">
-                  <span class="text-label">동기화 토큰(선택)</span>
-                  <input
-                    id="googleSyncToken"
-                    type="password"
-                    maxlength="120"
-                    placeholder="비워두면 간편 모드로 동작"
-                    autocomplete="off"
-                  />
-                </label>
+                <p id="googleSyncHelp" class="muted sync-help">
+                  서버에 설정된 내부 구글 시트 연동을 사용합니다. 브라우저에는 연동 주소가 노출되지 않습니다.
+                </p>
                 <div class="sync-actions">
                   <button id="syncQuestionnairesBtn" class="btn btn-secondary" type="button">척도 마스터 전송</button>
                   <button id="syncCurrentBtn" class="btn btn-secondary" type="button">현재 결과 전송</button>
                   <button id="syncHistoryBtn" class="btn btn-secondary" type="button">저장 기록 전체 전송</button>
                 </div>
                 <p class="muted sync-help">
-                  브라우저에서 직접 구글 웹앱으로 전송합니다. 전송 후에는 시트에 반영됐는지
-                  한 번 확인해주세요.
+                  서버 프록시를 통해 전송합니다. 전송 후에는 시트에 반영됐는지 한 번 확인해주세요.
                 </p>
-                <p id="syncStatus" class="sync-status muted">아직 구글 시트 전송을 실행하지 않았습니다.</p>
+                <p id="syncStatus" class="sync-status muted">로그인 후 서버에 설정된 내부 연동으로 구글 시트 전송을 사용할 수 있습니다.</p>
               </article>
 
               <!-- FR-06: 실적 보고서 -->

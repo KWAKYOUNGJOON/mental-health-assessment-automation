@@ -4,20 +4,18 @@
   const MANIFEST_URL = "./questionnaires/index.json";
   const HISTORY_KEY = "mh_scale_screening_history_v2";
   const WORKER_NAME_KEY = "mh_scale_worker_name_v1";
-  const GOOGLE_SYNC_SETTINGS_KEY = "mh_scale_google_sync_settings_v1";
   const EMBEDDED_DATA = window.__SCALE_SCREENING_BUNDLE__ || null;
   const IS_ADMIN_PAGE = new URLSearchParams(window.location.search).get("screen") === "admin";
   const DEFAULT_LOCAL_PORT = 8134;
   const DEFAULT_LOCAL_APP_URL = `http://127.0.0.1:${DEFAULT_LOCAL_PORT}/`;
-  const DEFAULT_GOOGLE_SYNC_URL =
-    "https://script.google.com/macros/s/AKfycbxdqepjCAlmtRoS-1-3aBclIzQx0LdJzSxAqVHfjRRc6BStQZxZZFalkkHkslVG5QOz/exec";
   let appConfig = {
     organizationName: "다시서기종합지원센터",
     teamName: "정신건강팀",
     contactNote: "",
     enabledScales: [],
     primaryColor: "",
-    kioskPinSet: false
+    kioskPinSet: false,
+    googleSyncConfigured: false
   };
 
   const KIOSK_MODE = new URLSearchParams(window.location.search).get("mode") === "kiosk";
@@ -62,18 +60,12 @@
     cacheUi();
     bindEvents();
     applyPageMode();
-    applyStoredGoogleSyncSettings();
+    updateGoogleSyncUi();
     await clearServerSessionSilently();
     await loadAppConfig();
     await loadSessionState();
     await loadManifest();
     renderHistory();
-  }
-
-  function applyStoredGoogleSyncSettings() {
-    const settings = loadGoogleSyncSettings();
-    ui.googleSyncUrl.value = settings.webAppUrl || DEFAULT_GOOGLE_SYNC_URL;
-    ui.googleSyncToken.value = settings.syncToken || "";
   }
 
   function isFileProtocol() {
@@ -139,67 +131,39 @@
         ? "PIN이 설정되어 있습니다. 새 PIN을 입력하면 변경됩니다."
         : "PIN이 설정되지 않았습니다. 키오스크 모드를 사용하려면 PIN을 설정해주세요.";
     }
+    updateGoogleSyncUi();
+    renderHistory();
   }
 
-  function onGoogleSyncSettingsInput() {
-    localStorage.setItem(GOOGLE_SYNC_SETTINGS_KEY, JSON.stringify(readGoogleSyncSettings()));
-    if (!ui.googleSyncUrl.value.trim()) {
-      setSyncStatus("기본 구글 연동 주소를 사용합니다.", "");
-      return;
-    }
-    if (!ui.googleSyncToken.value.trim()) {
-      setSyncStatus("간편 모드가 켜져 있습니다. 토큰 없이 전송하지만 URL을 아는 사람은 쓸 수 있습니다.", "");
-      return;
-    }
-    setSyncStatus("연동 설정을 저장했습니다. 전송 후에는 구글 시트에 반영됐는지 확인해주세요.", "");
+  function canUseGoogleSync() {
+    return Boolean(appConfig.googleSyncConfigured && state.session.user);
   }
 
-  function readGoogleSyncSettings() {
-    return {
-      webAppUrl: normalizeGoogleSyncUrl(ui.googleSyncUrl.value),
-      syncToken: ui.googleSyncToken.value.trim()
-    };
+  function getGoogleSyncStatusMessage() {
+    if (!appConfig.googleSyncConfigured) {
+      return "서버에 구글 시트 연동이 설정되지 않았습니다. 관리자에게 서버 환경변수 설정을 요청해주세요.";
+    }
+
+    if (!state.session.user) {
+      return "로그인하면 서버 프록시를 통해 구글 시트 전송을 사용할 수 있습니다.";
+    }
+
+    return "서버에 설정된 내부 연동으로 전송합니다. 브라우저에는 구글 연동 주소가 노출되지 않습니다.";
   }
 
-  function loadGoogleSyncSettings() {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(GOOGLE_SYNC_SETTINGS_KEY) || "{}");
-      return {
-        webAppUrl: normalizeGoogleSyncUrl(parsed.webAppUrl || ""),
-        syncToken: typeof parsed.syncToken === "string" ? parsed.syncToken : ""
-      };
-    } catch (error) {
-      console.warn(error);
-      return {
-        webAppUrl: DEFAULT_GOOGLE_SYNC_URL,
-        syncToken: ""
-      };
+  function updateGoogleSyncUi() {
+    const canSync = canUseGoogleSync();
+    [ui.syncQuestionnairesBtn, ui.syncCurrentBtn, ui.syncHistoryBtn].forEach((button) => {
+      if (button) {
+        button.disabled = !canSync;
+      }
+    });
+    if (ui.googleSyncHelp) {
+      ui.googleSyncHelp.textContent = getGoogleSyncStatusMessage();
     }
-  }
-
-  function normalizeGoogleSyncUrl(value) {
-    const normalized = typeof value === "string" ? value.trim() : "";
-    if (!normalized) {
-      return DEFAULT_GOOGLE_SYNC_URL;
+    if (ui.syncStatus && !ui.syncStatus.dataset.busy) {
+      setSyncStatus(getGoogleSyncStatusMessage(), appConfig.googleSyncConfigured ? "" : "error");
     }
-
-    if (isValidGoogleSyncUrlFormat(normalized)) {
-      return normalized;
-    }
-
-    if (
-      /^https:\/\/docs\.google\.com\/spreadsheets\//i.test(normalized) ||
-      /^https:\/\/script\.google\.com\/.*\/edit(?:[?#].*)?$/i.test(normalized) ||
-      /^https:\/\/script\.google\.com\/u\/\d+\/home\/projects\//i.test(normalized)
-    ) {
-      return DEFAULT_GOOGLE_SYNC_URL;
-    }
-
-    return normalized;
-  }
-
-  function isValidGoogleSyncUrlFormat(url) {
-    return /^https:\/\/script\.google\.com\/(?:macros\/s\/[A-Za-z0-9_-]+(?:\/(?:exec|dev))?|a\/macros\/[^/]+\/s\/[A-Za-z0-9_-]+(?:\/(?:exec|dev))?)(?:[/?#].*)?$/i.test(url);
   }
 
   function cacheUi() {
@@ -231,8 +195,7 @@
     ui.sessionMeta = document.getElementById("sessionMeta");
     ui.refreshServerDataBtn = document.getElementById("refreshServerDataBtn");
     ui.logoutBtn = document.getElementById("logoutBtn");
-    ui.googleSyncUrl = document.getElementById("googleSyncUrl");
-    ui.googleSyncToken = document.getElementById("googleSyncToken");
+    ui.googleSyncHelp = document.getElementById("googleSyncHelp");
     ui.syncQuestionnairesBtn = document.getElementById("syncQuestionnairesBtn");
     ui.syncCurrentBtn = document.getElementById("syncCurrentBtn");
     ui.syncHistoryBtn = document.getElementById("syncHistoryBtn");
@@ -355,8 +318,6 @@
     ui.registerForm.addEventListener("submit", onRegisterSubmit);
     ui.refreshServerDataBtn.addEventListener("click", onRefreshServerData);
     ui.logoutBtn.addEventListener("click", onLogoutClick);
-    ui.googleSyncUrl.addEventListener("input", onGoogleSyncSettingsInput);
-    ui.googleSyncToken.addEventListener("input", onGoogleSyncSettingsInput);
     ui.workerName.addEventListener("input", onWorkerNameInput);
     ui.clearSignatureBtn.addEventListener("click", onClearSignatureClick);
     ui.signatureCanvas.addEventListener("pointerdown", onSignaturePointerDown);
@@ -651,6 +612,8 @@
       ui.riskViewTab.classList.toggle("hidden", !user);
     }
     renderRiskBadge();
+    updateGoogleSyncUi();
+    renderHistory();
   }
 
   function setAuthMessage(message, type) {
@@ -2262,12 +2225,10 @@
   }
 
   async function onSyncQuestionnaires() {
-    const settings = readGoogleSyncSettings();
-    const validation = validateGoogleSyncSettings(settings);
+    const validation = validateGoogleSyncSettings();
     if (!validation.ok) {
       setSyncStatus(validation.message, "error");
       alert(validation.message);
-      validation.focusTarget?.focus();
       return;
     }
 
@@ -2275,16 +2236,16 @@
 
     try {
       await ensureAllQuestionnairesLoaded();
-      const payload = buildQuestionnaireMasterPayload(settings.syncToken);
+      const payload = buildQuestionnaireMasterPayload();
       await postGoogleSyncPayload(payload);
       setSyncStatus(
-        `척도 마스터 ${payload.questionnaires.length}개 전송 요청을 보냈습니다. 구글 시트에서 반영 여부를 확인해주세요.`,
+        `척도 마스터 ${payload.questionnaires.length}개 전송 요청을 서버 프록시로 보냈습니다. 구글 시트에서 반영 여부를 확인해주세요.`,
         "success"
       );
     } catch (error) {
       console.error(error);
       setSyncStatus(`척도 마스터 전송 실패: ${error.message}`, "error");
-      alert("척도 마스터 전송에 실패했습니다. URL과 인터넷 연결을 확인해주세요.");
+      alert(`척도 마스터 전송에 실패했습니다. ${error.message}`);
     } finally {
       setSyncBusy(false);
     }
@@ -2316,15 +2277,13 @@
   }
 
   async function sendRecordsToGoogleSheets(records, syncScope) {
-    const settings = readGoogleSyncSettings();
-    const validation = validateGoogleSyncSettings(settings);
+    const validation = validateGoogleSyncSettings();
     if (!validation.ok) {
       if (!IS_ADMIN_PAGE) {
         setActiveView("management");
       }
       setSyncStatus(validation.message, "error");
       alert(validation.message);
-      validation.focusTarget?.focus();
       return false;
     }
 
@@ -2333,18 +2292,18 @@
 
     try {
       await ensureAllQuestionnairesLoaded();
-      const payload = buildGoogleSyncPayload(records, syncScope, settings.syncToken);
+      const payload = buildGoogleSyncPayload(records, syncScope);
       await postGoogleSyncPayload(payload);
 
       setSyncStatus(
-        `${scopeLabel} ${records.length}건 전송 요청을 보냈습니다. 구글 시트에서 반영 여부를 확인해주세요.`,
+        `${scopeLabel} ${records.length}건 전송 요청을 서버 프록시로 보냈습니다. 구글 시트에서 반영 여부를 확인해주세요.`,
         "success"
       );
       return true;
     } catch (error) {
       console.error(error);
       setSyncStatus(`구글 시트 전송 실패: ${error.message}`, "error");
-      alert("구글 시트 전송에 실패했습니다. URL과 인터넷 연결을 확인해주세요.");
+      alert(`구글 시트 전송에 실패했습니다. ${error.message}`);
       return false;
     } finally {
       setSyncBusy(false);
@@ -2366,33 +2325,30 @@
     }
   }
 
-  function validateGoogleSyncSettings(settings) {
-    if (!settings.webAppUrl) {
+  function validateGoogleSyncSettings() {
+    if (!appConfig.googleSyncConfigured) {
       return {
         ok: false,
-        message: `구글 연동 주소를 입력해주세요. 기본 주소는 ${DEFAULT_GOOGLE_SYNC_URL} 입니다.`,
-        focusTarget: ui.googleSyncUrl
+        message: "서버에 구글 시트 연동이 설정되지 않았습니다. 관리자에게 문의해주세요."
       };
     }
 
-    if (!isValidGoogleSyncUrlFormat(settings.webAppUrl)) {
+    if (!state.session.user) {
       return {
         ok: false,
-        message: `구글 연동 주소 형식이 올바르지 않습니다. 배포된 웹앱 주소를 입력해주세요. 예시: ${DEFAULT_GOOGLE_SYNC_URL}`,
-        focusTarget: ui.googleSyncUrl
+        message: "로그인한 뒤 구글 시트 전송을 사용할 수 있습니다."
       };
     }
 
     return { ok: true };
   }
 
-  function buildGoogleSyncPayload(records, syncScope, syncToken) {
+  function buildGoogleSyncPayload(records, syncScope) {
     return {
       version: 1,
       source: "scale-screening-web-app",
       syncScope,
       sentAt: new Date().toISOString(),
-      token: syncToken,
       appSettings: readAppSettings(),
       records: records.map((record) => structuredCloneSafe(record)),
       questionnaires: state.manifest
@@ -2402,13 +2358,12 @@
     };
   }
 
-  function buildQuestionnaireMasterPayload(syncToken) {
+  function buildQuestionnaireMasterPayload() {
     return {
       version: 1,
       source: "scale-screening-web-app",
       syncScope: "questionnaire_master",
       sentAt: new Date().toISOString(),
-      token: syncToken,
       appSettings: readAppSettings(),
       questionnaires: state.manifest
         .map((item) => state.questionnaires.get(item.id))
@@ -2445,16 +2400,9 @@
   }
 
   async function postGoogleSyncPayload(payload) {
-    const settings = readGoogleSyncSettings();
-    await fetch(settings.webAppUrl, {
+    await apiRequest("/api/google-sync", {
       method: "POST",
-      mode: "no-cors",
-      credentials: "include",
-      cache: "no-store",
-      headers: {
-        "Content-Type": "text/plain;charset=utf-8"
-      },
-      body: JSON.stringify(payload)
+      body: payload
     });
   }
 
@@ -2506,9 +2454,11 @@
   }
 
   function setSyncBusy(isBusy, message) {
-    ui.syncQuestionnairesBtn.disabled = isBusy;
-    ui.syncCurrentBtn.disabled = isBusy;
-    ui.syncHistoryBtn.disabled = isBusy;
+    const canSync = canUseGoogleSync();
+    ui.syncQuestionnairesBtn.disabled = isBusy || !canSync;
+    ui.syncCurrentBtn.disabled = isBusy || !canSync;
+    ui.syncHistoryBtn.disabled = isBusy || !canSync;
+    ui.syncStatus.dataset.busy = isBusy ? "true" : "";
     if (message) {
       setSyncStatus(message, isBusy ? "" : "success");
     }
@@ -2525,6 +2475,7 @@
   function renderHistory() {
     const history = loadHistory();
     ui.historyTableBody.innerHTML = "";
+    const syncDisabledAttr = canUseGoogleSync() ? "" : " disabled";
 
     if (!history.length) {
       ui.historyTableEmpty.classList.remove("hidden");
@@ -2550,7 +2501,7 @@
           <div class="table-actions">
             <button class="history-btn" type="button" data-action="view" data-id="${escapeHtml(entry.id)}">보기</button>
             <button class="history-btn" type="button" data-action="export" data-id="${escapeHtml(entry.id)}">파일 저장</button>
-            <button class="history-btn" type="button" data-action="sync" data-id="${escapeHtml(entry.id)}">구글 시트 전송</button>
+            <button class="history-btn" type="button" data-action="sync" data-id="${escapeHtml(entry.id)}"${syncDisabledAttr}>구글 시트 전송</button>
             <button class="history-btn danger" type="button" data-action="delete" data-id="${escapeHtml(entry.id)}">삭제</button>
           </div>
         </td>
@@ -2587,6 +2538,7 @@
 
   function renderServerRecords() {
     ui.serverRecordsList.innerHTML = "";
+    const syncDisabledAttr = canUseGoogleSync() ? "" : " disabled";
 
     if (!state.session.user) {
       ui.serverRecordsMessage.textContent = state.session.bootstrapRequired
@@ -2613,7 +2565,7 @@
         <div class="history-actions">
           <button class="history-btn" type="button" data-source="server" data-action="view" data-id="${escapeHtml(entry.id)}">보기</button>
           <button class="history-btn" type="button" data-source="server" data-action="export" data-id="${escapeHtml(entry.id)}">파일 저장</button>
-          <button class="history-btn" type="button" data-source="server" data-action="sync" data-id="${escapeHtml(entry.id)}">구글 시트 전송</button>
+          <button class="history-btn" type="button" data-source="server" data-action="sync" data-id="${escapeHtml(entry.id)}"${syncDisabledAttr}>구글 시트 전송</button>
           <button class="history-btn danger" type="button" data-source="server" data-action="delete" data-id="${escapeHtml(entry.id)}">삭제</button>
         </div>
       `;
