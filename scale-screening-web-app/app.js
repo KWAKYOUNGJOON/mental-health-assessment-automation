@@ -15,7 +15,9 @@
     enabledScales: [],
     primaryColor: "",
     kioskPinSet: false,
-    googleSyncConfigured: false
+    googleSyncConfigured: false,
+    googleSyncMode: "",
+    googleSyncError: ""
   };
 
   const KIOSK_MODE = new URLSearchParams(window.location.search).get("mode") === "kiosk";
@@ -141,11 +143,15 @@
 
   function getGoogleSyncStatusMessage() {
     if (!appConfig.googleSyncConfigured) {
-      return "서버에 구글 시트 연동이 설정되지 않았습니다. 관리자에게 서버 환경변수 설정을 요청해주세요.";
+      return appConfig.googleSyncError || "서버에 구글 시트 연동이 설정되지 않았습니다. 관리자에게 서버 환경변수 설정을 요청해주세요.";
     }
 
     if (!state.session.user) {
       return "로그인하면 서버 프록시를 통해 구글 시트 전송을 사용할 수 있습니다.";
+    }
+
+    if (appConfig.googleSyncMode === "direct_api") {
+      return "서버가 Google Sheets API로 직접 시트를 생성·업데이트합니다. 브라우저에는 인증 정보가 노출되지 않습니다.";
     }
 
     return "서버에 설정된 내부 연동으로 전송합니다. 브라우저에는 구글 연동 주소가 노출되지 않습니다.";
@@ -2329,7 +2335,7 @@
     if (!appConfig.googleSyncConfigured) {
       return {
         ok: false,
-        message: "서버에 구글 시트 연동이 설정되지 않았습니다. 관리자에게 문의해주세요."
+        message: appConfig.googleSyncError || "서버에 구글 시트 연동이 설정되지 않았습니다. 관리자에게 문의해주세요."
       };
     }
 

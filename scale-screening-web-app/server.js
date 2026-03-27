@@ -2,6 +2,10 @@ const http = require("http");
 const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
+const {
+  getDirectGoogleSyncSettings,
+  syncGoogleSheetsDirect
+} = require("./google-sync-direct");
 
 const PORT = Number(process.argv[2] || process.env.PORT || 8134);
 const HOST = process.env.HOST || "0.0.0.0";
@@ -101,9 +105,18 @@ async function handleApiRequest(req, res, requestUrl) {
 
   if (req.method === "GET" && requestUrl.pathname === "/api/config") {
     const config = readConfig();
-    const { kioskPin: _pin, googleSyncWebAppUrl: _syncUrl, googleSyncToken: _syncToken, ...publicConfig } = config;
+    const syncConfig = getGoogleSyncConfig(config);
+    const {
+      kioskPin: _pin,
+      googleSyncWebAppUrl: _syncUrl,
+      googleSyncToken: _syncToken,
+      googleSyncSpreadsheetId: _syncSpreadsheetId,
+      ...publicConfig
+    } = config;
     publicConfig.kioskPinSet = Boolean(config.kioskPin && config.kioskPin.length >= 4);
-    publicConfig.googleSyncConfigured = getGoogleSyncConfig(config).configured;
+    publicConfig.googleSyncConfigured = syncConfig.configured;
+    publicConfig.googleSyncMode = syncConfig.mode || "";
+    publicConfig.googleSyncError = syncConfig.errorMessage || "";
     sendJson(res, 200, { ok: true, config: publicConfig });
     return;
   }
@@ -142,14 +155,16 @@ async function handleApiRequest(req, res, requestUrl) {
     if (!syncConfig.configured) {
       sendJson(res, 503, {
         ok: false,
-        error: "서버에 구글 시트 연동 주소가 설정되지 않았습니다."
+        error: syncConfig.errorMessage || "서버에 구글 시트 연동이 설정되지 않았습니다."
       });
       return;
     }
 
     const body = await readRequestBody(req);
     const payload = buildGoogleSyncProxyPayload(body, syncConfig.syncToken);
-    const result = await forwardGoogleSyncPayload(syncConfig.webAppUrl, payload);
+    const result = syncConfig.mode === "direct_api"
+      ? await forwardGoogleSyncPayloadDirect(syncConfig, payload)
+      : await forwardGoogleSyncPayload(syncConfig.webAppUrl, payload);
     sendJson(res, 200, {
       ok: true,
       result
@@ -878,7 +893,8 @@ function defaultConfig() {
     primaryColor: "",
     kioskPin: "",
     googleSyncWebAppUrl: "",
-    googleSyncToken: ""
+    googleSyncToken: "",
+    googleSyncSpreadsheetId: ""
   };
 }
 
@@ -892,15 +908,30 @@ function writeConfig(config) {
 
 function getGoogleSyncConfig(configOverride) {
   const config = configOverride || readConfig();
+  const directSettings = getDirectGoogleSyncSettings({
+    env: process.env,
+    config
+  });
+  if (directSettings.configured) {
+    return {
+      ...directSettings,
+      configured: true,
+      syncToken: "",
+      webAppUrl: ""
+    };
+  }
+
   const envUrl = normalizeGoogleSyncUrl(process.env.MH_GOOGLE_SYNC_URL || "");
   const envToken = normalizeText(process.env.MH_GOOGLE_SYNC_TOKEN || "");
   const fileUrl = normalizeGoogleSyncUrl(config.googleSyncWebAppUrl || "");
   const fileToken = normalizeText(config.googleSyncToken || "");
   const webAppUrl = envUrl || fileUrl;
   return {
+    mode: webAppUrl ? "apps_script" : (directSettings.errorMessage ? "direct_api" : ""),
     webAppUrl,
     syncToken: envToken || fileToken,
-    configured: Boolean(webAppUrl)
+    configured: Boolean(webAppUrl),
+    errorMessage: directSettings.errorMessage || ""
   };
 }
 
@@ -966,6 +997,36 @@ async function forwardGoogleSyncPayload(webAppUrl, payload) {
   }
 
   return data;
+}
+
+async function forwardGoogleSyncPayloadDirect(syncConfig, payload) {
+  try {
+    const result = await syncGoogleSheetsDirect(syncConfig, payload);
+    persistGoogleSyncSpreadsheetIdIfNeeded(syncConfig, result.spreadsheetId);
+    return result;
+  } catch (error) {
+    throw createHttpError(502, error.message || "Google Sheets API 직접 연동에 실패했습니다.");
+  }
+}
+
+function persistGoogleSyncSpreadsheetIdIfNeeded(syncConfig, spreadsheetId) {
+  const normalized = normalizeText(spreadsheetId);
+  if (!normalized) {
+    return;
+  }
+
+  const envSpreadsheetId = normalizeText(process.env.MH_GOOGLE_SYNC_SPREADSHEET_ID || "");
+  if (envSpreadsheetId) {
+    return;
+  }
+
+  const config = readConfig();
+  if (normalizeText(config.googleSyncSpreadsheetId) === normalized) {
+    return;
+  }
+
+  config.googleSyncSpreadsheetId = normalized;
+  writeConfig(config);
 }
 
 function readClients() {
