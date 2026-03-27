@@ -4,52 +4,298 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>정신건강 척도관리 웹앱</title>
-    <meta http-equiv="refresh" content="0; url=./github-pages-scale-webapp/" />
-    <script>
-      window.location.replace("./github-pages-scale-webapp/");
-    </script>
-    <style>
-      :root {
-        color-scheme: light;
-        font-family: "IBM Plex Sans KR", "Segoe UI", sans-serif;
-      }
-
-      body {
-        margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(180deg, #eef4ef 0%, #dde8df 100%);
-        color: #17392f;
-      }
-
-      main {
-        width: min(560px, calc(100vw - 32px));
-        padding: 32px;
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.88);
-        box-shadow: 0 24px 80px rgba(23, 57, 47, 0.12);
-      }
-
-      p {
-        margin: 0 0 12px;
-      }
-
-      a {
-        color: #0f7660;
-        font-weight: 700;
-      }
-    </style>
+    <meta
+      name="description"
+      content="정신건강 척도검사 입력, 결과 요약, 인쇄, 구글 시트 전송을 위한 웹앱"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css?v=20260327-3" />
+    <script defer src="./questionnaires-data.js?v=20260327-3"></script>
+    <script defer src="./app.js?v=20260327-3"></script>
   </head>
   <body>
-    <main>
-      <p>MINDMAP</p>
-      <p><strong>정신건강 척도관리 웹앱으로 이동 중입니다.</strong></p>
-      <p>
-        자동으로 열리지 않으면
-        <a href="./github-pages-scale-webapp/">여기를 눌러 바로 이동</a>
-        하세요.
-      </p>
+    <div class="page-backdrop"></div>
+    <main class="app-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">MindMap</p>
+          <h1>정신건강 척도관리 웹앱</h1>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="sidebar card">
+          <div class="sidebar-head">
+            <div>
+              <p class="section-label">척도 목록</p>
+              <h2>검사 선택</h2>
+            </div>
+            <span class="pill" id="questionnaireCount"></span>
+          </div>
+
+          <label class="text-field search-field">
+            <span class="text-label">척도 검색</span>
+            <input id="scaleSearchInput" type="search" placeholder="예: PHQ, CRI, 불면" />
+          </label>
+
+          <nav id="questionnaireNav" class="questionnaire-nav" aria-label="척도 목록"></nav>
+
+          <div class="sidebar-note">
+            <p class="section-label">운영 메모</p>
+            <p>
+              이 버전은 GitHub Pages 공개 배포용입니다. 척도검사는 누구나 수행할 수 있고, 구글 시트 저장은
+              대상 시트에 공유 권한이 있는 Google 계정만 사용할 수 있습니다.
+            </p>
+          </div>
+        </aside>
+
+        <section class="main-column">
+          <div class="view-tabs" role="tablist" aria-label="앱 화면 탭">
+            <button class="view-tab is-active" type="button" data-view="screening">검사 입력</button>
+            <button class="view-tab" type="button" data-view="result">결과 요약</button>
+            <button class="view-tab" type="button" data-view="deploy">공개 배포 안내</button>
+          </div>
+
+          <section class="view-pane" data-pane="screening">
+            <article class="card scale-card">
+              <div class="scale-head">
+                <div>
+                  <p id="scaleBadge" class="pill">척도</p>
+                  <h2 id="scaleTitle">척도를 불러오는 중입니다.</h2>
+                  <p id="scaleMeta" class="muted"></p>
+                </div>
+                <div class="progress-panel">
+                  <div class="progress-label-row">
+                    <span>응답 진행률</span>
+                    <strong id="progressLabel">0%</strong>
+                  </div>
+                  <div class="progress-bar" aria-hidden="true">
+                    <div id="progressFill" class="progress-fill"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="source-box">
+                <p class="source-label">출처</p>
+                <p id="scaleSource" class="source-text"></p>
+              </div>
+            </article>
+
+            <form id="screeningForm" class="form-grid" novalidate>
+              <article class="card">
+                <div class="section-head">
+                  <div>
+                    <p class="section-label">검사 기본정보</p>
+                    <h3>검사정보</h3>
+                  </div>
+                  <p class="muted">결과 저장과 구글 시트 전송에 함께 사용됩니다.</p>
+                </div>
+
+                <div class="meta-grid">
+                  <label class="text-field">
+                    <span class="text-label">검사일 *</span>
+                    <input id="sessionDate" type="date" />
+                  </label>
+                  <label class="text-field">
+                    <span class="text-label">담당자</span>
+                    <input id="workerName" type="text" maxlength="40" placeholder="담당자 이름" />
+                  </label>
+                  <label class="text-field">
+                    <span class="text-label">대상자 *</span>
+                    <input id="clientLabel" type="text" maxlength="60" placeholder="대상자 이름 또는 식별명" list="subjectSuggestions" />
+                  </label>
+                  <label class="text-field">
+                    <span class="text-label">생년월일</span>
+                    <input id="birthDate" type="date" />
+                  </label>
+                  <label class="text-field field-wide">
+                    <span class="text-label">비고</span>
+                    <textarea id="sessionNote" rows="2" placeholder="현장 메모 또는 참고 사항"></textarea>
+                  </label>
+                </div>
+
+                <datalist id="subjectSuggestions"></datalist>
+              </article>
+
+              <article class="card">
+                <div class="section-head">
+                  <div>
+                    <p class="section-label">응답자 특성</p>
+                    <h3>응답자 정보</h3>
+                  </div>
+                </div>
+                <div id="respondentFields" class="stack-area"></div>
+              </article>
+
+              <article class="card">
+                <div class="section-head">
+                  <div>
+                    <p class="section-label">문항 응답</p>
+                    <h3 id="questionPromptTitle">문항응답</h3>
+                  </div>
+                  <p id="questionPrompt" class="muted"></p>
+                </div>
+                <div id="questionsRoot" class="question-list"></div>
+              </article>
+
+              <div class="action-row">
+                <button id="calculateBtn" class="btn btn-primary" type="submit">결과 계산</button>
+                <button id="resetBtn" class="btn btn-secondary" type="button">현재 검사 초기화</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="view-pane hidden" data-pane="result">
+            <article class="card result-card">
+              <div class="print-header">
+                <p id="printOrgLine">다시서기종합지원센터 · 정신건강팀</p>
+                <h2 id="printScaleLine">정신건강 척도검사 결과지</h2>
+                <p id="printMetaLine"></p>
+              </div>
+
+              <div id="resultEmpty" class="empty-state">
+                문항 응답을 완료한 뒤 결과 계산을 누르면 결과가 여기에 표시됩니다.
+              </div>
+
+              <div id="resultPanel" class="hidden">
+                <div class="result-hero">
+                  <div>
+                    <p class="section-label">결과 요약</p>
+                    <h3 id="resultTitle">결과 제목</h3>
+                  </div>
+                  <div class="score-box">
+                    <strong id="resultScore">0점</strong>
+                    <span id="resultBand" class="band-chip">참고 구간</span>
+                  </div>
+                </div>
+
+                <div id="resultFlags" class="flag-list"></div>
+
+                <div class="result-grid">
+                  <section class="result-section">
+                    <h4>핵심 포인트</h4>
+                    <ul id="resultHighlights" class="bullet-list"></ul>
+                  </section>
+                  <section class="result-section">
+                    <h4>검사 정보</h4>
+                    <dl id="resultMeta" class="meta-list"></dl>
+                  </section>
+                </div>
+
+                <section class="result-section">
+                  <h4>문항별 응답</h4>
+                  <div id="resultBreakdown" class="breakdown-list"></div>
+                </section>
+
+                <section class="result-section">
+                  <h4>참고 메모</h4>
+                  <ul id="resultNotes" class="bullet-list"></ul>
+                </section>
+
+                <div class="action-row">
+                  <button id="saveResultBtn" class="btn btn-primary" type="button">구글 시트 전송</button>
+                  <button id="printBtn" class="btn btn-secondary" type="button">인쇄</button>
+                  <button id="exportCurrentBtn" class="btn btn-secondary" type="button">결과 파일 저장</button>
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="view-pane hidden" data-pane="deploy">
+            <article class="card">
+              <div class="section-head">
+                <div>
+                  <p class="section-label">승인 사용자 전용</p>
+                  <h3>구글 시트 저장 및 분석 연결</h3>
+                </div>
+              </div>
+
+              <div class="permission-panel">
+                <div>
+                  <p class="text-label">시트 기능 사용</p>
+                  <p class="muted">권한 승인을 받은 뒤 켜면 현재 결과를 구글 시트로 전송할 수 있습니다.</p>
+                </div>
+                <label class="toggle-switch">
+                  <input id="googleSyncEnabled" type="checkbox" />
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="filter-grid">
+                <label class="text-field">
+                  <span class="text-label">구글 연동 주소</span>
+                  <input id="googleSyncUrl" type="url" maxlength="300" placeholder="배포된 Apps Script 웹앱 주소" autocomplete="off" />
+                </label>
+                <label class="text-field">
+                  <span class="text-label">동기화 토큰(선택)</span>
+                  <input id="googleSyncToken" type="password" maxlength="120" placeholder="운영자가 설정한 토큰이 있으면 입력" autocomplete="off" />
+                </label>
+              </div>
+
+              <div class="deploy-box deploy-box-accent">
+                <p><strong>권한 승인 절차</strong></p>
+                <ul class="bullet-list">
+                  <li>먼저 <strong>권한 승인 페이지</strong>를 열어 Google 로그인과 시트 접근 권한을 승인합니다.</li>
+                  <li>대상 스프레드시트에 공유된 Google 계정만 저장 기능을 사용할 수 있습니다.</li>
+                  <li>권한이 없는 계정은 검사, 결과 확인, 인쇄까지만 사용할 수 있습니다.</li>
+                </ul>
+                <div class="inline-actions">
+                  <button id="openAuthorizeBtn" class="btn btn-primary" type="button">권한 승인 페이지 열기</button>
+                  <button id="openSheetBtn" class="btn btn-secondary" type="button">대상 구글 시트 열기</button>
+                </div>
+              </div>
+
+              <div class="inline-actions">
+                <button id="syncCurrentBtn" class="btn btn-secondary" type="button">현재 결과 전송</button>
+                <button id="syncQuestionnairesBtn" class="btn btn-secondary" type="button">척도 마스터 전송</button>
+                <button id="checkSyncStatusBtn" class="btn btn-secondary" type="button">연동 상태 확인</button>
+              </div>
+
+              <p id="syncStatusText" class="muted">
+                아직 구글 시트 전송을 실행하지 않았습니다.
+              </p>
+
+              <div class="deploy-box">
+                <p><strong>연동 동작 방식</strong></p>
+                <ul class="bullet-list">
+                  <li>검사 결과는 웹앱 안에서 계산 즉시 확인할 수 있습니다.</li>
+                  <li>시트 기능 사용이 켜진 경우에만 현재 결과를 구글 시트 DB로 전송할 수 있습니다.</li>
+                  <li>척도 마스터 전송은 문항 정의와 선택지 구조를 시트에 맞춰 갱신합니다.</li>
+                </ul>
+              </div>
+
+              <div class="section-head">
+                <div>
+                  <p class="section-label">GitHub Pages</p>
+                  <h3>공개 배포 안내</h3>
+                </div>
+              </div>
+
+              <ol class="guide-list">
+                <li>이 폴더 `github-pages-scale-webapp`를 GitHub Pages 배포 대상으로 사용합니다.</li>
+                <li>저장소 루트의 `.github/workflows/deploy-pages.yml`이 `main` 브랜치 푸시 때 자동 배포합니다.</li>
+                <li>GitHub 저장소 설정의 `Pages`에서 Source를 `GitHub Actions`로 지정하면 공개 주소가 활성화됩니다.</li>
+                <li>구글 시트 DB 웹앱을 연결하면 저장 기능을 확장할 수 있습니다.</li>
+              </ol>
+
+              <div class="deploy-box">
+                <p><strong>배포 준비 파일</strong></p>
+                <ul class="bullet-list">
+                  <li>`github-pages-scale-webapp/index.html`</li>
+                  <li>`github-pages-scale-webapp/styles.css`</li>
+                  <li>`github-pages-scale-webapp/app.js`</li>
+                  <li>`github-pages-scale-webapp/questionnaires-data.js`</li>
+                  <li>`.github/workflows/deploy-pages.yml`</li>
+                </ul>
+              </div>
+            </article>
+          </section>
+        </section>
+      </div>
     </main>
   </body>
 </html>
